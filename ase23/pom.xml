@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>edu.tum.ase</groupId>
-	<artifactId>box</artifactId>
+	<artifactId>ase23</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>box</name>
-	<description>Demo project for Spring Boot</description>
+	<name>ase23</name>
+	<description>ASE Delivery System Project of Group 23</description>
 	<properties>
 		<java.version>19</java.version>
 	</properties>
