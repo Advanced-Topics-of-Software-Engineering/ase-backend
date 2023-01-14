@@ -1,6 +1,6 @@
-package edu.tum.ase.box.repository;
+package edu.tum.ase.ase23.repository;
 
-import edu.tum.ase.box.model.Box;
+import edu.tum.ase.ase23.model.Box;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

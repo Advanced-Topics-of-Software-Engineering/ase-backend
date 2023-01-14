@@ -1,7 +1,7 @@
-package edu.tum.ase.box.service;
+package edu.tum.ase.ase23.service;
 
-import edu.tum.ase.box.model.Box;
-import edu.tum.ase.box.repository.BoxRepository;
+import edu.tum.ase.ase23.model.Box;
+import edu.tum.ase.ase23.repository.BoxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

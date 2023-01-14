@@ -1,9 +1,9 @@
-package edu.tum.ase.box;
+package edu.tum.ase.ase23;
 
 import com.mongodb.client.MongoClient;
-import edu.tum.ase.box.model.Box;
-import edu.tum.ase.box.repository.BoxRepository;
-import edu.tum.ase.box.service.BoxService;
+import edu.tum.ase.ase23.model.Box;
+import edu.tum.ase.ase23.repository.BoxRepository;
+import edu.tum.ase.ase23.service.BoxService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

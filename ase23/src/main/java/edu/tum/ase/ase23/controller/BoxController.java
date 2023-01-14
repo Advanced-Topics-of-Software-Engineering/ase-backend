@@ -1,7 +1,7 @@
-package edu.tum.ase.box.controller;
+package edu.tum.ase.ase23.controller;
 
-import edu.tum.ase.box.model.Box;
-import edu.tum.ase.box.service.BoxService;
+import edu.tum.ase.ase23.model.Box;
+import edu.tum.ase.ase23.service.BoxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

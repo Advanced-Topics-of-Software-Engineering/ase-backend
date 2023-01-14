@@ -1,4 +1,4 @@
-package edu.tum.ase.box.model;
+package edu.tum.ase.ase23.model;
 
 import com.mongodb.lang.NonNull;
 import org.springframework.data.annotation.Id;
