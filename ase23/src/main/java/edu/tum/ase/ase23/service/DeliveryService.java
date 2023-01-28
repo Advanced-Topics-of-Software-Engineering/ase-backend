@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +40,23 @@ public class DeliveryService {
         List<Delivery> deliveries = this.getAllDeliveries();
         return deliveries.stream().filter(delivery ->
                 delivery.getCustomer().getId().equals(deliveryId)).findFirst().orElse(null);
+    }
+    public Delivery getDeliveryByTrackingID(String trackingID) throws Exception {
+        if (trackingID == null || trackingID.isEmpty()) {
+            throw new Exception("Tracking ID is required");
+        }
+        List<Delivery> deliveries = this.getAllDeliveries();
+        return deliveries.stream().filter(delivery ->
+                delivery.getTrackingID().equals(trackingID)).findFirst().orElse(null);
+    }
+
+    public Delivery updateDeliveryByDeliveryID(String deliveryID) throws Exception {
+        if (deliveryID == null || deliveryID.isEmpty()) {
+            throw new Exception("Delivery ID is required");
+        }
+        List<Delivery> deliveries = this.getAllDeliveries();
+        return deliveries.stream().filter(delivery ->
+                delivery.getId().equals(deliveryID)).findFirst().orElse(null);
     }
 }
 

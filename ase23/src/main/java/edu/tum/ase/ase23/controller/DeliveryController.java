@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/delivery")
@@ -39,8 +38,14 @@ public class DeliveryController {
     }
 
     // Get Delivery information by trackingID
-
-    // Create Delivery
+    @GetMapping("/{trackingID}")
+    public Delivery getDeliveryByTrackingID(@PathVariable String trackingID) throws Exception {
+        return deliveryService.getDeliveryByTrackingID(trackingID);
+    }
 
     // Update Delivery
+    @PostMapping("delivery/{deliveryID}")
+    public Delivery updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
+        return deliveryService.updateDeliveryByDeliveryID(deliveryID);
+    }
 }
