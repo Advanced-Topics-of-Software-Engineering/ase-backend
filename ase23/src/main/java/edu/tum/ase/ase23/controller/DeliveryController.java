@@ -46,6 +46,6 @@ public class DeliveryController {
     // Update Delivery
     @PostMapping("/deliveryID/{deliveryID}")
     public Delivery updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
-        return deliveryService.updateDeliveryByDeliveryID(deliveryID);
+        return deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery);
     }
 }

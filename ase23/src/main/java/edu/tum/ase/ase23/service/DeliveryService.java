@@ -1,6 +1,7 @@
 package edu.tum.ase.ase23.service;
 
 
+import edu.tum.ase.ase23.model.Box;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.User;
 import edu.tum.ase.ase23.repository.DeliveryRepository;
@@ -38,25 +39,31 @@ public class DeliveryService {
             throw new Exception("Delivery ID is required");
         }
         List<Delivery> deliveries = this.getAllDeliveries();
-        return deliveries.stream().filter(delivery ->
-                delivery.getCustomer().getId().equals(deliveryId)).findFirst().orElse(null);
+        Delivery matchedDelivery = deliveries.stream().filter(delivery ->
+                delivery.getId().equals(deliveryId)).findFirst().orElse(null);
+        return matchedDelivery;
     }
     public Delivery getDeliveryByTrackingID(String trackingID) throws Exception {
         if (trackingID == null || trackingID.isEmpty()) {
             throw new Exception("Tracking ID is required");
         }
         List<Delivery> deliveries = this.getAllDeliveries();
-        return deliveries.stream().filter(delivery ->
+        Delivery matchedDelivery = deliveries.stream().filter(delivery ->
                 delivery.getTrackingID().equals(trackingID)).findFirst().orElse(null);
+        return matchedDelivery;
     }
 
-    public Delivery updateDeliveryByDeliveryID(String deliveryID) throws Exception {
+    public Delivery updateDeliveryByDeliveryID(String deliveryID, Delivery delivery) throws Exception {
         if (deliveryID == null || deliveryID.isEmpty()) {
             throw new Exception("Delivery ID is required");
         }
-        List<Delivery> deliveries = this.getAllDeliveries();
-        return deliveries.stream().filter(delivery ->
-                delivery.getId().equals(deliveryID)).findFirst().orElse(null);
+        Delivery updatedDelivery = this.getDeliveryById(deliveryID);
+        updatedDelivery.setBox(delivery.getBox());
+        updatedDelivery.setCustomer(delivery.getCustomer());
+        updatedDelivery.setDeliverer(delivery.getDeliverer());
+        updatedDelivery.setStatus(delivery.getStatus());
+        updatedDelivery.setTrackingID(delivery.getTrackingID());
+        return deliveryRepository.save(updatedDelivery);
     }
 }
 
