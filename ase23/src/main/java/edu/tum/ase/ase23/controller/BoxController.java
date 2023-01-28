@@ -24,17 +24,17 @@ public class BoxController {
         return boxService.createBox(box);
     }
 
-    @GetMapping("/{boxName}")
+    @GetMapping("/name/{boxName}")
     public Box findBoxByName(@PathVariable String boxName) throws Exception {
         return boxService.findByName(boxName);
     }
 
-    @GetMapping("/{boxStreetAddress}")
+    @GetMapping("/address/{boxStreetAddress}")
     public Box findBoxByStreetAddress(@PathVariable String StreetAddress) throws Exception {
         return boxService.findByStreetAddress(StreetAddress);
     }
 
-    @GetMapping("/{boxStatus}")
+    @GetMapping("/status/{boxAlive}")
     public Box findBoxByAlive(@PathVariable Boolean Alive) throws Exception {
         return boxService.findByAlive(Alive);
     }
