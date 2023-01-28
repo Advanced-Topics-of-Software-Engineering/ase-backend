@@ -4,6 +4,8 @@ import com.mongodb.client.MongoClient;
 import edu.tum.ase.ase23.model.Box;
 import edu.tum.ase.ase23.repository.BoxRepository;
 import edu.tum.ase.ase23.service.BoxService;
+import edu.tum.ase.ase23.service.UserService;
+import edu.tum.ase.ase23.repository.UserRepository;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,13 +19,17 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import java.util.List;
 
 @SpringBootApplication
-@EnableMongoRepositories(basePackageClasses = {BoxRepository.class})
+//@EnableMongoRepositories(basePackageClasses = {BoxRepository.class})
+@EnableMongoRepositories(basePackageClasses = {UserRepository.class})
 public class BoxApplication implements CommandLineRunner {
 	@Autowired
 	MongoClient mongoClient;
 
 	@Autowired
 	BoxService boxService;
+
+	@Autowired
+	UserService userService;
 
 	private static final Logger log = LoggerFactory.getLogger(BoxApplication.class);
 
@@ -35,25 +41,23 @@ public class BoxApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		log.info("MongoClient = " + mongoClient.getClusterDescription());
 
-		/*
-		String boxName = "Box#1";
-		String boxStreetAddress = "Schrofelhofstr 14";
-		Box box = boxService.createBox(new Box(boxName, boxStreetAddress));
 
+//		String boxName = "Box#111q";
+//		String boxStreetAddress = "Schrofelhofsatr 14";
+//		Box box = boxService.createBox(new Box(boxName, boxStreetAddress));
+//
+//		log.info(String.format("Project %s is created with id %s",
+//				box.getId(),
+//				box.getName(),
+//				box.getStreetAddress()
+//		));
+//		Box boxFind = boxService.findByName(boxName);
+//		log.info(String.format("Found Project %s with id %s",
+//				boxFind.getId(),
+//				boxFind.getName(),
+//				boxFind.getStreetAddress()
+//		));
 
-		log.info(String.format("Box %s is created with id %s",
-				box.getId(),
-				box.getName(),
-				box.getStreetAddress()
-		));
-
-		Box boxFind = boxService.findByName(boxName);
-
-		log.info(String.format("Found Box %s with id %s",
-				boxFind.getId(),
-				boxFind.getName(),
-				boxFind.getStreetAddress()
-		)); */
 
 		List<Box> boxList = boxService.getAllBoxes();
 		log.info("Number of Box n Database is " + boxList.size());
