@@ -52,14 +52,21 @@ public class DeliveryApplication implements CommandLineRunner {
         Delivery delivery = deliveryService.createDelivery(
                 new Delivery(box, customer, deliverer, status, trackingID)
         );
+        User customer2 = userService.getAllCustomers().get(1);
+        Delivery delivery2 = deliveryService.createDelivery(
+                new Delivery(box, customer2, deliverer, status, trackingID)
+        );
         log.info(String.format("Delivery %s is created with status: %s",
                 				delivery.getId(),
                 				delivery.getStatus()
                 		));
-        Delivery delivery2 = deliveryService.getDeliveriesOfUserFromUserId(customer.getId());
-        log.info(String.format("getDeliveriesOfUserFromUserId is successful with id: %s status: %s",
-                delivery2.getId(),
-                delivery2.getStatus()
-        ));
+        List<Delivery> deliveriesOfUser = deliveryService.getDeliveriesOfUserFromUserId(customer.getId());
+        for(Delivery d: deliveriesOfUser) {
+            log.info(String.format("getDeliveriesOfUserFromUserId is successful with id: %s, customerId: %s, status: %s",
+                    d.getId(),
+                    d.getCustomer().getId(),
+                    d.getStatus()
+            ));
+        }
     }
 }
