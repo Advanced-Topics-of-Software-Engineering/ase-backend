@@ -32,5 +32,31 @@ public class BoxService {
         return boxRepo.findByAlive(alive).orElseThrow(() -> new Exception("There is no any alive box!"));
     }
 
-    
+    public List<Box> findAllAlive(Boolean Alive) throws Exception {
+        List<Box> boxes = this.getAllBoxes();
+        return boxes.stream().filter(box -> box.getAlive().equals(Alive)).collect(Collectors.toList());
+    }
+
+
+
+    public Box update(String Id, Box box) throws Exception {
+        Box existingBox = boxRepository.findById(Id).orElseThrow(() -> new Exception("Box not found with id: " + Id));
+        if(box.getName() != null){
+            existingBox.setName(box.getName());
+        }
+        if(box.getStreetAddress() != null){
+            existingBox.setStreetAddress(box.getStreetAddress());
+        }
+        if(box.getAlive() != null){
+            existingBox.setAlive(box.getAlive());
+        }
+
+        return boxRepository.save(existingBox);
+    }
+
+    public Box delete(String Id) throws Exception {
+        Box deletedBox = boxRepository.findById(Id).orElseThrow(() -> new Exception("Box not found with id: " + Id));
+        deletedBox.setAlive(false);
+        return boxRepository.save(deletedBox);
+    }
 }
