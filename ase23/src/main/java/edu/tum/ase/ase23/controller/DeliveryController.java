@@ -32,19 +32,19 @@ public class DeliveryController {
     }
 
     // Get Delivery info by ID
-    @GetMapping("/{deliveryId}")
+    @GetMapping("/id/{deliveryId}")
     public Delivery getDeliveryById(@PathVariable String deliveryId) throws Exception {
         return deliveryService.getDeliveryById(deliveryId);
     }
 
     // Get Delivery information by trackingID
-    @GetMapping("/{trackingID}")
+    @GetMapping("/trackingID/{trackingID}")
     public Delivery getDeliveryByTrackingID(@PathVariable String trackingID) throws Exception {
         return deliveryService.getDeliveryByTrackingID(trackingID);
     }
 
     // Update Delivery
-    @PostMapping("/{deliveryID}")
+    @PostMapping("/deliveryID/{deliveryID}")
     public Delivery updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
         return deliveryService.updateDeliveryByDeliveryID(deliveryID);
     }
