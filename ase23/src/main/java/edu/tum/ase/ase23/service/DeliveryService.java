@@ -17,6 +17,8 @@ public class DeliveryService {
     DeliveryRepository deliveryRepository;
     @Autowired
     UserService userService;
+    @Autowired
+    BoxService boxService;
 
     public List<Delivery> getAllDeliveries() {
         return deliveryRepository.findAll();
@@ -58,11 +60,16 @@ public class DeliveryService {
             throw new Exception("Delivery ID is required");
         }
         Delivery updatedDelivery = this.getDeliveryById(deliveryID);
-        updatedDelivery.setBox(delivery.getBox());
-        updatedDelivery.setCustomer(delivery.getCustomer());
-        updatedDelivery.setDeliverer(delivery.getDeliverer());
-        updatedDelivery.setStatus(delivery.getStatus());
-        updatedDelivery.setTrackingID(delivery.getTrackingID());
+        Box updatedBox = boxService.update(delivery.getBox().getId(), delivery.getBox());
+        updatedDelivery.setBox(updatedBox);
+        // updatedDelivery.setCustomer(delivery.getCustomer());
+        // updatedDelivery.setDeliverer(delivery.getDeliverer());
+        if (delivery.getStatus() != null) {
+            updatedDelivery.setStatus(delivery.getStatus());
+        }
+        if (delivery.getTrackingID() != null) {
+            updatedDelivery.setTrackingID(delivery.getTrackingID());
+        }
         return deliveryRepository.save(updatedDelivery);
     }
 }

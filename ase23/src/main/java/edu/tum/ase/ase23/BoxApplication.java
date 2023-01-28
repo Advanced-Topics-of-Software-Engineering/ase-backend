@@ -57,7 +57,6 @@ public class BoxApplication implements CommandLineRunner {
 				boxFind.getName(),
 				boxFind.getStreetAddress()
 		));
-		*/
 
 		List<Box> boxList = boxService.getAllBoxes();
 		log.info("Number of Box n Database is " + boxList.size());
