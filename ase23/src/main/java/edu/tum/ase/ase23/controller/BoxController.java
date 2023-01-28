@@ -15,7 +15,7 @@ public class BoxController {
     BoxService boxService;
 
     @GetMapping("")
-    public List<Box> getAllProject() {
+    public List<Box> getAllBoxes() {
         return boxService.getAllBoxes();
     }
 
@@ -25,7 +25,8 @@ public class BoxController {
     }
 
     @GetMapping("/{boxName}")
-    public Box findProjectByName(@PathVariable String boxName) throws Exception {
+    public Box findBoxByName(@PathVariable String boxName) throws Exception {
         return boxService.findByName(boxName);
     }
+
 }
