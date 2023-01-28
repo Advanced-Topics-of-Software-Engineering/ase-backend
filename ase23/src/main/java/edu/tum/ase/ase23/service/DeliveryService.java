@@ -60,8 +60,10 @@ public class DeliveryService {
             throw new Exception("Delivery ID is required");
         }
         Delivery updatedDelivery = this.getDeliveryById(deliveryID);
-        Box updatedBox = boxService.update(delivery.getBox().getId(), delivery.getBox());
-        updatedDelivery.setBox(updatedBox);
+        if (delivery.getBox() != null) {
+            Box updatedBox = boxService.update(delivery.getBox().getId(), delivery.getBox());
+            updatedDelivery.setBox(updatedBox);
+        }
         // updatedDelivery.setCustomer(delivery.getCustomer());
         // updatedDelivery.setDeliverer(delivery.getDeliverer());
         if (delivery.getStatus() != null) {
