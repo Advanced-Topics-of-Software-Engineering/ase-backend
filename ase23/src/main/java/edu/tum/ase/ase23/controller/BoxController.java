@@ -15,7 +15,7 @@ public class BoxController {
     BoxService boxService;
 
     @GetMapping("")
-    public List<Box> getAllProject() {
+    public List<Box> getAllBoxes() {
         return boxService.getAllBoxes();
     }
 
@@ -24,8 +24,19 @@ public class BoxController {
         return boxService.createBox(box);
     }
 
-    @GetMapping("/{boxName}")
-    public Box findProjectByName(@PathVariable String boxName) throws Exception {
+    @GetMapping("/name/{boxName}")
+    public Box findBoxByName(@PathVariable String boxName) throws Exception {
         return boxService.findByName(boxName);
     }
+
+    @GetMapping("/address/{boxStreetAddress}")
+    public Box findBoxByStreetAddress(@PathVariable String StreetAddress) throws Exception {
+        return boxService.findByStreetAddress(StreetAddress);
+    }
+
+    @GetMapping("/status/{boxAlive}")
+    public Box findBoxByAlive(@PathVariable Boolean Alive) throws Exception {
+        return boxService.findByAlive(Alive);
+    }
+
 }

@@ -24,4 +24,13 @@ public class BoxService {
         return boxRepo.findByName(name).orElseThrow(() -> new Exception("No Box with name " + name));
     }
 
+    public Box findByStreetAddress(String streetAddress) throws Exception {
+        return boxRepo.findByStreetAddress(streetAddress).orElseThrow(() -> new Exception("No Box with this Street Address " + streetAddress));
+    }
+
+    public Box findByAlive(Boolean alive) throws Exception {
+        return boxRepo.findByAlive(alive).orElseThrow(() -> new Exception("There is no any alive box!"));
+    }
+
+    
 }

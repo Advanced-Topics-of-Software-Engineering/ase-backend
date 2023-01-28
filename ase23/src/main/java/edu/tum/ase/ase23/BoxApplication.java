@@ -41,6 +41,7 @@ public class BoxApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		log.info("MongoClient = " + mongoClient.getClusterDescription());
 
+
 //		String boxName = "Box#111q";
 //		String boxStreetAddress = "Schrofelhofsatr 14";
 //		Box box = boxService.createBox(new Box(boxName, boxStreetAddress));
@@ -50,16 +51,15 @@ public class BoxApplication implements CommandLineRunner {
 //				box.getName(),
 //				box.getStreetAddress()
 //		));
-
 //		Box boxFind = boxService.findByName(boxName);
-
 //		log.info(String.format("Found Project %s with id %s",
 //				boxFind.getId(),
 //				boxFind.getName(),
 //				boxFind.getStreetAddress()
 //		));
 
+
 		List<Box> boxList = boxService.getAllBoxes();
-		log.info("Number of Project in Database is " + boxList.size());
+		log.info("Number of Box n Database is " + boxList.size());
 	}
 }
