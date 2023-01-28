@@ -1,4 +1,4 @@
-package edu.tum.ase.ase23;
+/*package edu.tum.ase.ase23;
 
 import com.mongodb.client.MongoClient;
 import edu.tum.ase.ase23.model.Box;
@@ -63,3 +63,4 @@ public class BoxApplication implements CommandLineRunner {
 		log.info("Number of Box n Database is " + boxList.size());
 	}
 }
+*/

@@ -28,7 +28,7 @@ public class DeliveryController {
     }
 
     @GetMapping("/user/{id}")
-    public Delivery findByUserId(@PathVariable String userId) throws Exception {
-        return deliveryService.findByUserId(userId);
+    public Delivery getDeliveriesOfUserFromUserId(@PathVariable String userId) throws Exception {
+        return deliveryService.getDeliveriesOfUserFromUserId(userId);
     }
 }

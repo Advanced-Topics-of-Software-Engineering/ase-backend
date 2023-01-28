@@ -25,14 +25,14 @@ public class DeliveryService {
         return deliveryRepo.save(delivery);
     }
 
-    public Delivery findByUserId(String userId) throws Exception {
+    public Delivery getDeliveriesOfUserFromUserId(String userId) throws Exception {
         User user = userService.getUserById(userId);
+        System.out.println("User:" + user);
         List<Delivery> deliveries = this.getAllDeliveries();
-        Delivery foundDelivery = deliveries.stream().filter(delivery ->
+        return deliveries.stream().filter(delivery ->
                         delivery.getCustomer().getId().equals(user.getId()) ||
                                 delivery.getDeliverer().getId().equals(user.getId())).findFirst()
                 .orElse(null);
-        return foundDelivery;
     }
 }
 

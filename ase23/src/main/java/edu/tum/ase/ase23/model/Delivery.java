@@ -31,8 +31,7 @@ public class Delivery {
 
     protected Delivery() {}
 
-    public Delivery(String id, Box box, User customer, User deliverer, String status, String trackingID) {
-        this.id = id;
+    public Delivery(Box box, User customer, User deliverer, String status, String trackingID) {
         this.box = box;
         this.customer = customer;
         this.deliverer = deliverer;
