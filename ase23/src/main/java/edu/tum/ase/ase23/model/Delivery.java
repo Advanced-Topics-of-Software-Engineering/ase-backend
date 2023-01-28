@@ -13,7 +13,7 @@ public class Delivery {
     @Id
     private String id;
 
-    @DBRef
+    @Reference
     private Box box;
 
     @Reference
