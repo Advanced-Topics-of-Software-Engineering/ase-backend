@@ -41,6 +41,14 @@ public class User {
         return id;
     }
 
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
     public String getEmail() {
         return email;
     }
