@@ -1,12 +1,11 @@
-package edu.tum.ase.project.model;
+package edu.tum.ase.ase23.model;
 
 import com.mongodb.lang.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-@Document(collection = "projects")
-public class Project {
-
+@Document(collection = "boxes")
+public class Box {
     @Id
     private String id;
 
@@ -14,10 +13,15 @@ public class Project {
     @NonNull
     private String name;
 
-    protected Project() {}
+//    @Indexed(unique = false) // Need to check.
+    @NonNull
+    private String streetAddress;
 
-    public Project(String name) {
+    protected Box() {}
+
+    public Box(String name, String streetAddress) {
         this.name = name;
+        this.streetAddress = streetAddress;
     }
 
     //getters and setters
@@ -32,5 +36,13 @@ public class Project {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
     }
 }
