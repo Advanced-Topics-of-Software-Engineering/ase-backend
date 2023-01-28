@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface UserRepository extends MongoRepository<User, String> {
     public List<User> findByUserType(String type);
 
-    public Optional<User> findByUserId(String type);
+    public Optional<User> findById(String type);
 }
