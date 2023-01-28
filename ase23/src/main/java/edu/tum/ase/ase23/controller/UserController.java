@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -27,5 +28,26 @@ public class UserController {
     @GetMapping("/dispatchers")
     public List<User> getAllDispatchers(){
         return userService.getAllDispatchers();
+    }
+
+    @PostMapping("/{userId}")
+    public String changeUserPassword(@PathVariable String userId, @RequestBody Map<String, String> payload) {
+
+        try {
+            String requestMadeBy = payload.get("requestMadeBy");
+            User user = userService.getUserById(requestMadeBy);
+            String oldPassword = "";
+            Boolean isAdmin = false;
+            if (!user.getUserType().equals("dispatcher")) {
+                oldPassword = payload.get("oldPassword");
+                isAdmin = true;
+            }
+            String newPassword = payload.get("newPassword");
+            userService.changePassword(userId, oldPassword, newPassword, isAdmin);
+            return "true";
+        }
+        catch (Exception e) {
+            return "false";
+        }
     }
 }
