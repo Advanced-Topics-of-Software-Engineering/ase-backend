@@ -23,7 +23,7 @@ public class Box {
 
     protected Box() {}
 
-    public Box(String name, String streetAddress) {
+    public Box(String name, String streetAddress, Boolean alive) {
         this.name = name;
         this.streetAddress = streetAddress;
         this.alive = Boolean.TRUE;
@@ -42,6 +42,8 @@ public class Box {
     public Boolean getAlive() {
         return alive;
     }
+
+    public String getStreetAddress() {return streetAddress; }
 
 
     public void setName(String name) {
