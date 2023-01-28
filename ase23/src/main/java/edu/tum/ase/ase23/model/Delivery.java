@@ -2,6 +2,7 @@ package edu.tum.ase.ase23.model;
 
 import com.mongodb.lang.NonNull;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,13 +13,13 @@ public class Delivery {
     @Id
     private String id;
 
-    @DBRef
+    @Reference
     private Box box;
 
-    @DBRef
+    @Reference
     private User customer;
 
-    @DBRef
+    @Reference
     private User deliverer;
 
     @NonNull
@@ -30,8 +31,7 @@ public class Delivery {
 
     protected Delivery() {}
 
-    public Delivery(String id, Box box, User customer, User deliverer, String status, String trackingID) {
-        this.id = id;
+    public Delivery(Box box, User customer, User deliverer, String status, String trackingID) {
         this.box = box;
         this.customer = customer;
         this.deliverer = deliverer;
