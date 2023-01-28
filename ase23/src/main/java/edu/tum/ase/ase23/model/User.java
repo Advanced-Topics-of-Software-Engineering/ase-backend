@@ -1,5 +1,6 @@
 package edu.tum.ase.ase23.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mongodb.lang.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -18,6 +19,7 @@ public class User {
     private String email;
 
     @NonNull
+    @JsonIgnore
     private String password;
 
     @Indexed(unique = true)
