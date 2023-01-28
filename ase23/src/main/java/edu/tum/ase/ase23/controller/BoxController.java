@@ -29,4 +29,14 @@ public class BoxController {
         return boxService.findByName(boxName);
     }
 
+    @GetMapping("/{boxStreetAddress}")
+    public Box findBoxByStreetAddress(@PathVariable String StreetAddress) throws Exception {
+        return boxService.findByStreetAddress(StreetAddress);
+    }
+
+    @GetMapping("/{boxStatus}")
+    public Box findBoxByAlive(@PathVariable Boolean Alive) throws Exception {
+        return boxService.findByAlive(Alive);
+    }
+
 }
