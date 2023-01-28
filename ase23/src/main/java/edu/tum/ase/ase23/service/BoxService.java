@@ -42,9 +42,15 @@ public class BoxService {
 
     public Box update(String Id, Box box) throws Exception {
         Box existingBox = boxRepository.findById(Id).orElseThrow(() -> new Exception("Box not found with id: " + Id));
-        existingBox.setName(box.getName());
-        existingBox.setStreetAddress(box.getStreetAddress());
-        existingBox.setAlive(box.getAlive());
+        if(box.getName() != null){
+            existingBox.setName(box.getName());
+        }
+        if(box.getStreetAddress() != null){
+            existingBox.setStreetAddress(box.getStreetAddress());
+        }
+        if(box.getAlive() != null){
+            existingBox.setAlive(box.getAlive());
+        }
         return boxRepository.save(existingBox);
     }
 
