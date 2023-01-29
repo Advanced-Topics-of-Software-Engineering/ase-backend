@@ -13,6 +13,7 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+
     public List<User> getAllDeliverers() {
         return userRepository.findByUserType("deliverer");
     }
@@ -47,5 +48,10 @@ public class UserService {
         }
         userRepository.save(user);
     }
+
+    public User getInfoOfUserFromUserId(String userId) throws Exception {
+        return this.getUserById(userId);
+    }
+
 
 }
