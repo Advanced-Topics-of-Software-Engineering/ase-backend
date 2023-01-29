@@ -3,11 +3,13 @@ package edu.tum.ase.ase23.controller;
 import edu.tum.ase.ase23.model.User;
 import edu.tum.ase.ase23.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -19,7 +21,6 @@ public class UserController {
     public List<User> getAllDeliverers(){
         return userService.getAllDeliverers();
     }
-
     @GetMapping("/customers")
     public List<User> getAllCustomers(){
         return userService.getAllCustomers();
@@ -30,8 +31,8 @@ public class UserController {
         return userService.getAllDispatchers();
     }
 
-    @PostMapping("/{userId}")
-    public String changeUserPassword(@PathVariable String userId, @RequestBody Map<String, String> payload) {
+    @PostMapping("/{userId}/password")
+    public HttpStatus changeUserPassword(@PathVariable String userId, @RequestBody Map<String, String> payload) {
 
         try {
             String requestMadeBy = payload.get("requestMadeBy");
@@ -44,10 +45,10 @@ public class UserController {
             }
             String newPassword = payload.get("newPassword");
             userService.changePassword(userId, oldPassword, newPassword, isAdmin);
-            return "true";
+            return HttpStatus.ACCEPTED;
         }
         catch (Exception e) {
-            return "false";
+            return HttpStatus.BAD_REQUEST;
         }
     }
 }
