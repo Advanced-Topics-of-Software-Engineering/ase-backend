@@ -1,4 +1,4 @@
-package edu.tum.ase.ase23;
+/*package edu.tum.ase.ase23;
 
 import com.mongodb.client.MongoClient;
 import edu.tum.ase.ase23.config.CorsConfig;

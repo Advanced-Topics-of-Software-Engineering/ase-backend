@@ -17,11 +17,16 @@ public class Box {
     @NonNull
     private String streetAddress;
 
+    @NonNull
+    private Boolean alive;
+
+
     protected Box() {}
 
-    public Box(String name, String streetAddress) {
+    public Box(String name, String streetAddress, Boolean alive) {
         this.name = name;
         this.streetAddress = streetAddress;
+        this.alive = Boolean.TRUE;
     }
 
     //getters and setters
@@ -34,15 +39,20 @@ public class Box {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Boolean getAlive() {
+        return alive;
     }
 
-    public String getStreetAddress() {
-        return streetAddress;
+    public String getStreetAddress() {return streetAddress; }
+
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setStreetAddress(String streetAddress) {
         this.streetAddress = streetAddress;
     }
+
+    public void setAlive(Boolean alive) {this.alive = alive; }
 }
