@@ -22,6 +22,11 @@ public class User {
     @JsonIgnore
     private String password;
 
+    @NonNull
+    private String name;
+
+    @NonNull
+    private String surname;
     @Indexed(unique = true)
     @NonNull
     private String RFIDToken;
@@ -66,10 +71,26 @@ public class User {
     }
 
     public String getRFIDToken() {
-        return password;
+        return RFIDToken;
     }
 
     public void setRFIDToken(String RFIDToken) {
         this.RFIDToken = RFIDToken;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 }
