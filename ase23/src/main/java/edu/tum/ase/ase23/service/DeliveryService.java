@@ -35,8 +35,8 @@ public class DeliveryService {
                         delivery.getCustomerID().equals(user.getId())).collect(Collectors.toList());
     }
 
-    public List<Delivery> getDeliveriesOfUserFromDeliveryId(String deliveryId) throws Exception {
-        User user = userService.getUserById(deliveryId);
+    public List<Delivery> getDeliveriesOfUserFromDeliveryId(String delivererId) throws Exception {
+        User user = userService.getUserById(delivererId);
         List<Delivery> deliveries = this.getAllDeliveries();
         return deliveries.stream().filter(delivery ->
                         delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
