@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface UserRepository extends MongoRepository<User, String> {
-    public Set<Role> findByRoles(RoleEnum type);
+    List<User> findByRoles(RoleEnum role);
 
     public Optional<User> findById(String type);
 
