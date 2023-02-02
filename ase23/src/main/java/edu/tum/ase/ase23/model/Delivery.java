@@ -15,11 +15,9 @@ public class Delivery {
     @Reference
     private Box box;
 
-    @Reference
-    private User customer;
+    private String customerID;
 
-    @Reference
-    private User deliverer;
+    private String delivererID;
 
     @NonNull
     private String status;
@@ -30,10 +28,10 @@ public class Delivery {
 
     protected Delivery() {}
 
-    public Delivery(Box box, User customer, User deliverer, String status, String trackingID) {
+    public Delivery(Box box, String customerID, String delivererID, String status, String trackingID) {
         this.box = box;
-        this.customer = customer;
-        this.deliverer = deliverer;
+        this.customerID = customerID;
+        this.delivererID = delivererID;
         this.status = status;
         this.trackingID = trackingID;
     }
@@ -52,20 +50,20 @@ public class Delivery {
         this.box = box;
     }
 
-    public User getCustomer() {
-        return customer;
+    public String getCustomerID() {
+        return customerID;
     }
 
-    public void setCustomer(User customer) {
-        this.customer = customer;
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
-    public User getDeliverer() {
-        return deliverer;
+    public String getDelivererID() {
+        return delivererID;
     }
 
-    public void setDeliverer(User deliverer) {
-        this.deliverer = deliverer;
+    public void setDelivererID(String delivererID) {
+        this.delivererID = delivererID;
     }
 
     public String getStatus() {

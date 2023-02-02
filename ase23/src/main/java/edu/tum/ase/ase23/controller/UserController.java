@@ -31,24 +31,4 @@ public class UserController {
         return userService.getAllDispatchers();
     }
 
-    @PostMapping("/{userId}/password")
-    public HttpStatus changeUserPassword(@PathVariable String userId, @RequestBody Map<String, String> payload) {
-
-        try {
-            String requestMadeBy = payload.get("requestMadeBy");
-            User user = userService.getUserById(requestMadeBy);
-            String oldPassword = "";
-            Boolean isAdmin = false;
-            if (!user.getUserType().equals("dispatcher")) {
-                oldPassword = payload.get("oldPassword");
-                isAdmin = true;
-            }
-            String newPassword = payload.get("newPassword");
-            userService.changePassword(userId, oldPassword, newPassword, isAdmin);
-            return HttpStatus.ACCEPTED;
-        }
-        catch (Exception e) {
-            return HttpStatus.BAD_REQUEST;
-        }
-    }
 }
