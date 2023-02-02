@@ -4,19 +4,31 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mongodb.lang.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.HashSet;
+import java.util.Set;
+
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Document(collection = "users")
 public class User {
     @Id
     private String id;
 
-    @NonNull
-    private String userType;
+    @DBRef
+    private Set<Role> roles = new HashSet<>();
 
     @Indexed(unique = true)
     @NonNull
     private String email;
+
+    @Indexed(unique = true)
+    @NonNull
+    private String username;
 
     @NonNull
     @JsonIgnore
@@ -28,9 +40,10 @@ public class User {
 
     protected User() {}
 
-    public User(String userType, String email, String password, String RFIDToken) {
-        this.userType = userType;
+    public User(Set<Role> roles, String email, String username, String password, String RFIDToken) {
+        this.roles = roles;
         this.email = email;
+        this.username = username;
         this.password = password;
         this.RFIDToken = RFIDToken;
     }
@@ -41,12 +54,12 @@ public class User {
         return id;
     }
 
-    public String getUserType() {
-        return userType;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public void setUserType(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public String getEmail() {
@@ -55,6 +68,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -66,7 +87,7 @@ public class User {
     }
 
     public String getRFIDToken() {
-        return RFIDToken;
+        return password;
     }
 
     public void setRFIDToken(String RFIDToken) {
