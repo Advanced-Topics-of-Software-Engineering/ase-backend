@@ -36,6 +36,20 @@ public class DeliveryService {
                         delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
     }
 
+    public List<Delivery> getDeliveriesOfUserFromCustomerId(String customerId) throws Exception {
+        User user = userService.getUserById(customerId);
+        List<Delivery> deliveries = this.getAllDeliveries();
+        return deliveries.stream().filter(delivery ->
+                        delivery.getCustomerID().equals(user.getId())).collect(Collectors.toList());
+    }
+
+    public List<Delivery> getDeliveriesOfUserFromDeliveryId(String deliveryId) throws Exception {
+        User user = userService.getUserById(deliveryId);
+        List<Delivery> deliveries = this.getAllDeliveries();
+        return deliveries.stream().filter(delivery ->
+                        delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
+    }
+
     public Delivery getDeliveryById(String deliveryId) throws Exception {
         if (deliveryId == null || deliveryId.isEmpty()) {
             throw new Exception("Delivery ID is required");
