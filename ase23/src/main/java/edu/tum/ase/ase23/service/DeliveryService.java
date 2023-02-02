@@ -28,14 +28,6 @@ public class DeliveryService {
         return deliveryRepository.save(delivery);
     }
 
-    public List<Delivery> getDeliveriesOfUserFromUserId(String userId) throws Exception {
-        User user = userService.getUserById(userId);
-        List<Delivery> deliveries = this.getAllDeliveries();
-        return deliveries.stream().filter(delivery ->
-                delivery.getCustomerID().equals(user.getId()) ||
-                        delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
-    }
-
     public List<Delivery> getDeliveriesOfUserFromCustomerId(String customerId) throws Exception {
         User user = userService.getUserById(customerId);
         List<Delivery> deliveries = this.getAllDeliveries();
@@ -78,8 +70,12 @@ public class DeliveryService {
             Box updatedBox = boxService.update(delivery.getBox().getId(), delivery.getBox());
             updatedDelivery.setBox(updatedBox);
         }
-        // updatedDelivery.setCustomer(delivery.getCustomer());
-        // updatedDelivery.setDeliverer(delivery.getDeliverer());
+        if (delivery.getCustomerID() != null){
+            updatedDelivery.setCustomerID(delivery.getCustomerID());
+        }
+        if (delivery.getDelivererID() != null){
+            updatedDelivery.setDelivererID(delivery.getDelivererID());
+        }
         if (delivery.getStatus() != null) {
             updatedDelivery.setStatus(delivery.getStatus());
         }

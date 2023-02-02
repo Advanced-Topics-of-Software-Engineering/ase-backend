@@ -51,9 +51,9 @@ public class BoxApplication implements CommandLineRunner {
         Delivery delivery = deliveryService.createDelivery(
                 new Delivery(box, customerID, delivererID, status, trackingID)
         );
-        String customer2ID = userService.getAllCustomers().get(1).getId();
+        /*String customer2ID = userService.getAllCustomers().get(1).getId();
         Delivery delivery2 = deliveryService.createDelivery(
                 new Delivery(box, customer2ID, delivererID, status, trackingID)
-        );
+        );*/
 	}
 }

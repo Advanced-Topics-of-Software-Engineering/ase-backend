@@ -26,10 +26,6 @@ public class DeliveryController {
         return deliveryService.createDelivery(Delivery);
     }
 
-    @GetMapping("/user/{userId}")
-    public List<Delivery> getDeliveriesOfUserFromUserId(@PathVariable String userId) throws Exception {
-        return deliveryService.getDeliveriesOfUserFromUserId(userId);
-    }
     @GetMapping("/delivery/{deliveryId}")
     public List<Delivery> getDeliveriesOfUserFromDeliveryId(@PathVariable String deliveryId) throws Exception {
         return deliveryService.getDeliveriesOfUserFromDeliveryId(deliveryId);

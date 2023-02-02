@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -15,15 +16,21 @@ public class UserService {
     UserRepository userRepository;
 
     public List<User> getAllDeliverers() {
-        return userRepository.findByRoles(RoleEnum.ROLE_DELIVERER);
+        List<User> users = userRepository.findAll();
+        return users.stream().filter(user ->
+                user.getRoles().stream().findAny().get().getRoleEnum().toString().equals("ROLE_DELIVERER")).toList();
     }
 
     public List<User> getAllCustomers() {
-        return userRepository.findByRoles(RoleEnum.ROLE_CUSTOMER);
+        List<User> users = userRepository.findAll();
+        return users.stream().filter(user ->
+                user.getRoles().stream().findAny().get().getRoleEnum().toString().equals("ROLE_CUSTOMER")).toList();
     }
 
     public List<User> getAllDispatchers() {
-        return userRepository.findByRoles(RoleEnum.ROLE_DISPATCHER);
+        List<User> users = userRepository.findAll();
+        return users.stream().filter(user ->
+                user.getRoles().stream().findAny().get().getRoleEnum().toString().equals("ROLE_DISPATCHER")).toList();
     }
 
     public User getUserById(String id) throws Exception {
