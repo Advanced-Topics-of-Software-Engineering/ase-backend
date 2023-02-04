@@ -48,6 +48,18 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.getDeliveryByTrackingID(trackingID));
     }
 
+    // Get deliveries of customer by box id
+    @GetMapping("/customer/{customerID}/box/{boxID}")
+    public ResponseEntity<?> getDeliveriesOfCustomerByBoxID(@PathVariable String customerID, @PathVariable String boxID) throws Exception {
+        return ResponseEntity.ok(deliveryService.getDeliveriesOfCustomerByBoxID(customerID, boxID));
+    }
+
+    // Get deliveries of customer/deliverer by box id
+    @GetMapping("/deliverer/{deliveryID}/box/{boxID}")
+    public ResponseEntity<?> getDeliveriesOfDelivererByBoxID(@PathVariable String trackingID) throws Exception {
+        return ResponseEntity.ok(deliveryService.getDeliveriesOfDelivererByBoxID(trackingID));
+    }
+
     // Update Delivery
     @PostMapping("/update/{deliveryID}")
     public ResponseEntity<?> updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {

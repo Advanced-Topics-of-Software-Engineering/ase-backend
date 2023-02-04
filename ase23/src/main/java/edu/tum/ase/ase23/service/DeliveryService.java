@@ -32,14 +32,23 @@ public class DeliveryService {
         User user = userService.getUserById(customerId);
         List<Delivery> deliveries = this.getAllDeliveries();
         return deliveries.stream().filter(delivery ->
-                        delivery.getCustomerID().equals(user.getId())).collect(Collectors.toList());
+                delivery.getCustomerID().equals(user.getId())).collect(Collectors.toList());
     }
 
     public List<Delivery> getDeliveriesOfUserFromDeliveryId(String delivererId) throws Exception {
         User user = userService.getUserById(delivererId);
         List<Delivery> deliveries = this.getAllDeliveries();
         return deliveries.stream().filter(delivery ->
-                        delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
+                delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
+    }
+
+    public List<Delivery> getDeliveriesFromBoxId(String boxId) throws Exception {
+        if (boxId == null || boxId.isEmpty()) {
+            throw new Exception("Box ID is required");
+        }
+        List<Delivery> deliveries = this.getAllDeliveries();
+        return deliveries.stream().filter(delivery ->
+                delivery.getBox().getId().equals(boxId)).collect(Collectors.toList());
     }
 
     public Delivery getDeliveryById(String deliveryId) throws Exception {
@@ -83,6 +92,12 @@ public class DeliveryService {
             updatedDelivery.setTrackingID(delivery.getTrackingID());
         }
         return deliveryRepository.save(updatedDelivery);
+    }
+
+    public List<Delivery> getDeliveriesOfCustomerByBoxID(String deliveryID, String boxID) throws Exception {
+        List<Delivery> deliveriesOfCustomer = this.getDeliveriesOfUserFromDeliveryId(deliveryID);
+        // Filter those deliveries by boxID and return all matching that boxID
+
     }
 }
 
