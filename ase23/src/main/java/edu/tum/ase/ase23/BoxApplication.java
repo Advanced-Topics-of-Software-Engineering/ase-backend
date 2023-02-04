@@ -43,15 +43,15 @@ public class BoxApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		log.info("MongoClient = " + mongoClient.getClusterDescription());
+        /*
         Box box = boxService.findByName("Box#1");
         String customerID = userService.getAllCustomers().get(0).getId();
         String delivererID = userService.getAllDeliverers().get(0).getId();
-        String status = "Ordered";
         String trackingID = "TrackingIDXD";
         Delivery delivery = deliveryService.createDelivery(
-                new Delivery(box, customerID, delivererID, status, trackingID)
+                new Delivery(box, customerID, delivererID, trackingID)
         );
-        /*String customer2ID = userService.getAllCustomers().get(1).getId();
+        String customer2ID = userService.getAllCustomers().get(1).getId();
         Delivery delivery2 = deliveryService.createDelivery(
                 new Delivery(box, customer2ID, delivererID, status, trackingID)
         );*/
