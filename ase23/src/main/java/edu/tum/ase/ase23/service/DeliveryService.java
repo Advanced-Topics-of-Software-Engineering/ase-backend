@@ -70,16 +70,16 @@ public class DeliveryService {
             Box updatedBox = boxService.update(delivery.getBox().getId(), delivery.getBox());
             updatedDelivery.setBox(updatedBox);
         }
-        if (delivery.getCustomerID() != null){
+        if (delivery.getCustomerID() != null && !delivery.getCustomerID().isEmpty()){
             updatedDelivery.setCustomerID(delivery.getCustomerID());
         }
-        if (delivery.getDelivererID() != null){
+        if (delivery.getDelivererID() != null && !delivery.getDelivererID().isEmpty()){
             updatedDelivery.setDelivererID(delivery.getDelivererID());
         }
-        if (delivery.getStatus() != null) {
+        if (delivery.getStatus() != null  && !delivery.getStatus().isEmpty()) {
             updatedDelivery.setStatus(delivery.getStatus());
         }
-        if (delivery.getTrackingID() != null) {
+        if (delivery.getTrackingID() != null && !delivery.getStatus().isEmpty()) {
             updatedDelivery.setTrackingID(delivery.getTrackingID());
         }
         return deliveryRepository.save(updatedDelivery);
