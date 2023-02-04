@@ -53,4 +53,15 @@ public class DeliveryController {
     public ResponseEntity<?> updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
         return ResponseEntity.ok(deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery));
     }
+
+    @PostMapping("/delete/{deliveryID}")
+    public ResponseEntity<?> deleteDelivery(@PathVariable String deliveryID) throws Exception {
+        if (!deliveryService.delete(deliveryID)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Could not delete");
+        }
+        return ResponseEntity.ok("Deleted delivery with id " + deliveryID + " successfully");
+    }
+
 }
