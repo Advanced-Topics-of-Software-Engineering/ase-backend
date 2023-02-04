@@ -3,11 +3,11 @@ package edu.tum.ase.ase23.controller;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.service.DeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/delivery")
@@ -17,39 +17,40 @@ public class DeliveryController {
     DeliveryService deliveryService;
 
     @GetMapping("")
-    public List<Delivery> getAllDeliveries() {
-        return deliveryService.getAllDeliveries();
+    public ResponseEntity<?> getAllDeliveries() {
+        return ResponseEntity.ok(deliveryService.getAllDeliveries());
     }
 
     @PostMapping("")
-    public Delivery createDelivery(@RequestBody Delivery Delivery) {
-        return deliveryService.createDelivery(Delivery);
+    public ResponseEntity<?> createDelivery(@RequestBody Delivery Delivery) {
+        return ResponseEntity.ok(deliveryService.createDelivery(Delivery));
+        // new Delivery(dto.get(userId), .. , )
     }
 
     @GetMapping("/deliverer/{delivererId}")
-    public List<Delivery> getDeliveriesOfUserFromDelivererId(@PathVariable String delivererId) throws Exception {
-        return deliveryService.getDeliveriesOfUserFromDeliveryId(delivererId);
+    public ResponseEntity<?> getDeliveriesOfUserFromDelivererId(@PathVariable String delivererId) throws Exception {
+        return ResponseEntity.ok(deliveryService.getDeliveriesOfUserFromDeliveryId(delivererId));
     }
     @GetMapping("/customer/{customerId}")
-    public List<Delivery> getDeliveriesOfUserFromCustomerId(@PathVariable String customerId) throws Exception {
-        return deliveryService.getDeliveriesOfUserFromCustomerId(customerId);
+    public ResponseEntity<?> getDeliveriesOfUserFromCustomerId(@PathVariable String customerId) throws Exception {
+        return ResponseEntity.ok(deliveryService.getDeliveriesOfUserFromCustomerId(customerId));
     }
 
     // Get Delivery info by ID
     @GetMapping("/id/{deliveryId}")
-    public Delivery getDeliveryById(@PathVariable String deliveryId) throws Exception {
-        return deliveryService.getDeliveryById(deliveryId);
+    public ResponseEntity<?> getDeliveryById(@PathVariable String deliveryId) throws Exception {
+        return ResponseEntity.ok(deliveryService.getDeliveryById(deliveryId));
     }
 
     // Get Delivery information by trackingID
     @GetMapping("/trackingID/{trackingID}")
-    public Delivery getDeliveryByTrackingID(@PathVariable String trackingID) throws Exception {
-        return deliveryService.getDeliveryByTrackingID(trackingID);
+    public ResponseEntity<?> getDeliveryByTrackingID(@PathVariable String trackingID) throws Exception {
+        return ResponseEntity.ok(deliveryService.getDeliveryByTrackingID(trackingID));
     }
 
     // Update Delivery
     @PostMapping("/update/{deliveryID}")
-    public Delivery updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
-        return deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery);
+    public ResponseEntity<?> updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
+        return ResponseEntity.ok(deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery));
     }
 }

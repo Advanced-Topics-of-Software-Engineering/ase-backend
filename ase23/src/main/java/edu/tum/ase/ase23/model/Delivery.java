@@ -28,11 +28,11 @@ public class Delivery {
 
     protected Delivery() {}
 
-    public Delivery(Box box, String customerID, String delivererID, String status, String trackingID) {
+    public Delivery(Box box, String customerID, String delivererID, String trackingID) {
         this.box = box;
         this.customerID = customerID;
         this.delivererID = delivererID;
-        this.status = status;
+        this.status = "Ordered";
         this.trackingID = trackingID;
     }
 
