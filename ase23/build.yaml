@@ -1,0 +1,14 @@
+steps:
+  - name: openjdk:19
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        mvnw clean install && \
+        java -jar ase23-0.0.1-SNAPSHOT.jar
+
+timeout: 2000s
+options:
+  machineType: E2_HIGHCPU_32
+  logging: CLOUD_LOGGING_ONLY
+  substitutionOption: ALLOW_LOOSE

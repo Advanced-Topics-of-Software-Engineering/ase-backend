@@ -1,4 +1,4 @@
-package edu.tum.ase.ase23;
+/*package edu.tum.ase.ase23;
 
 import com.mongodb.client.MongoClient;
 import edu.tum.ase.ase23.config.CorsConfig;
@@ -43,7 +43,6 @@ public class BoxApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("MongoClient = " + mongoClient.getClusterDescription());
-        /*
         Box box = boxService.findByName("Box#1");
         String customerID = userService.getAllCustomers().get(0).getId();
         String delivererID = userService.getAllDeliverers().get(0).getId();
@@ -55,6 +54,7 @@ public class BoxApplication implements CommandLineRunner {
         Delivery delivery2 = deliveryService.createDelivery(
                 new Delivery(box, customer2ID, delivererID, status, trackingID)
         );
-         */
     }
 }
+
+ */
