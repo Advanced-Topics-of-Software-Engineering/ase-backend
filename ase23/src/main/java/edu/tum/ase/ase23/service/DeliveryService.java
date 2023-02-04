@@ -97,31 +97,34 @@ public class DeliveryService {
 
 
     public List<Delivery> getDeliveriesOfCustomerByBoxID(String customerID, String boxID) throws Exception {
-        List<Delivery> deliveriesOfCustomer = this.getDeliveriesOfUserFromCustomerId(deliveryID);
-        return List < Delivery > deliveriesOfCustomerAtSameBox = deliveriesOfCustomer.stream().filter(delivery ->
-                delivery.getBox().getId().equals(boxID)).collect(Collectors.toList())
+        List<Delivery> deliveriesOfCustomer = this.getDeliveriesOfUserFromCustomerId(customerID);
+        List<Delivery> deliveriesOfCustomerAtSameBox = deliveriesOfCustomer.stream().filter(delivery ->
+                delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
+        return deliveriesOfCustomerAtSameBox;
         // Filter deliveries of the customer by boxID and return all deliveries of user at the same box.
     }
 
     public List<Delivery> getDeliveriesAtSameBoxOfCustomerByStatus(String customerID, String boxID, String status) throws Exception {
         List<Delivery> deliveriesOfCustomerAtSameBox = this.getDeliveriesOfCustomerByBoxID(customerID, boxID);
-        return List < Delivery > deliveriesOfCustomerAtSameBoxAsStatus = deliveriesOfCustomerAtSameBox.stream().filter(delivery ->
-                delivery.getStatus().equals(status)).collect(Collectors.toList())
+        List <Delivery> deliveriesOfCustomerAtSameBoxAsStatus = deliveriesOfCustomerAtSameBox.stream().filter(delivery ->
+                delivery.getStatus().equals(status)).collect(Collectors.toList());
+        return deliveriesOfCustomerAtSameBoxAsStatus;
         // Filter deliveries of the customer by boxID and return all deliveries of user at the same box as Box Status.
     }
 
-
     public List<Delivery> getDeliveriesOfDelivererByBoxID(String delivererID, String boxID) throws Exception {
-        List<Delivery> deliveriesOfDeliverer = this.getDeliveriesOfUserFromDelivererId(deliveryID);
-        return List < Delivery > deliveriesOfDelivererAtSameBox = deliveriesOfDeliverer.stream().filter(delivery ->
-                delivery.getBox().getId().equals(boxID)).collect(Collectors.toList())
+        List<Delivery> deliveriesOfDeliverer = this.getDeliveriesOfUserFromDelivererId(delivererID);
+        List<Delivery> deliveriesOfDelivererAtSameBox = deliveriesOfDeliverer.stream().filter(delivery ->
+                delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
+        return deliveriesOfDelivererAtSameBox;
         // Filter deliveries of the deliverer by boxID and return all deliveries of user at the same box.
     }
 
     public List<Delivery> getDeliveriesAtSameBoxOfDelivererByStatus(String delivererID, String boxID, String status) throws Exception {
         List<Delivery> deliveriesOfDelivererAtSameBox = this.getDeliveriesOfDelivererByBoxID(delivererID, boxID);
-        return List < Delivery > deliveriesOfDelivererAtSameBoxAsStatus = deliveriesOfDelivererAtSameBox.stream().filter(delivery ->
-                delivery.getStatus().equals(status)).collect(Collectors.toList())
+        List <Delivery> deliveriesOfDelivererAtSameBoxAsStatus = deliveriesOfDelivererAtSameBox.stream().filter(delivery ->
+                delivery.getStatus().equals(status)).collect(Collectors.toList());
+        return deliveriesOfDelivererAtSameBoxAsStatus;
         // Filter deliveries of the deliverer by boxID and return all deliveries of user at the same box as box status.
     }
 

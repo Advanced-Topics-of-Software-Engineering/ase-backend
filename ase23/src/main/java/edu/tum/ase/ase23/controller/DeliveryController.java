@@ -59,20 +59,22 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.getDeliveriesOfDelivererByBoxID(delivererID, boxID));
     }
 
-    // Update Delivery
-    @PostMapping("/update/{deliveryID}")
-    public ResponseEntity<?> updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
-        return ResponseEntity.ok(deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery));
-    }
-
     @GetMapping("/customer/{customerID}/box/{boxID}/status/{status}")
     public ResponseEntity<?> getDeliveriesAtSameBoxOfCustomerByStatus(@PathVariable String customerID, @PathVariable String boxID, @PathVariable String status) throws Exception {
         return ResponseEntity.ok(deliveryService.getDeliveriesAtSameBoxOfCustomerByStatus(customerID, boxID, status));
     }
 
     @GetMapping("/deliverer/{delivererID}/box/{boxID}/status/{status}")
-    public ResponseEntity<?> getDeliveriesAtSameBoxOfCustomerByStatus(@PathVariable String delivererID, @PathVariable String boxID, @PathVariable String status) throws Exception {
-        return ResponseEntity.ok(deliveryService.getDeliveriesAtSameBoxOfCustomerByStatus(delivererID, boxID, status));
+    public ResponseEntity<?> getDeliveriesAtSameBoxOfDelivererByStatus(@PathVariable String delivererID, @PathVariable String boxID, @PathVariable String status) throws Exception {
+        return ResponseEntity.ok(deliveryService.getDeliveriesAtSameBoxOfDelivererByStatus(delivererID, boxID, status));
     }
+
+    // Update Delivery
+    @PostMapping("/update/{deliveryID}")
+    public ResponseEntity<?> updateDeliveryByDeliveryID(@PathVariable String deliveryID, @RequestBody Delivery delivery) throws Exception {
+        return ResponseEntity.ok(deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery));
+    }
+
+
 
 }
