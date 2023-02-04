@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/delivery")
@@ -29,7 +28,7 @@ public class DeliveryController {
 
     @GetMapping("/deliverer/{delivererId}")
     public ResponseEntity<?> getDeliveriesOfUserFromDelivererId(@PathVariable String delivererId) throws Exception {
-        return ResponseEntity.ok(deliveryService.getDeliveriesOfUserFromDeliveryId(delivererId));
+        return ResponseEntity.ok(deliveryService.getDeliveriesOfUserFromDelivererId(delivererId));
     }
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getDeliveriesOfUserFromCustomerId(@PathVariable String customerId) throws Exception {
