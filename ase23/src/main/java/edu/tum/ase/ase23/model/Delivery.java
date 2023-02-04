@@ -46,6 +46,8 @@ public class Delivery {
         return box;
     }
 
+    public String getStatus() { return status; }
+
     public void setBox(Box box) {
         this.box = box;
     }
