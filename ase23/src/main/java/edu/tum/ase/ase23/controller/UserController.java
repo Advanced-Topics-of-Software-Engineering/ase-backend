@@ -1,13 +1,8 @@
 package edu.tum.ase.ase23.controller;
-
-import edu.tum.ase.ase23.model.User;
 import edu.tum.ase.ase23.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 
 @RestController
@@ -18,17 +13,17 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/deliverers")
-    public List<User> getAllDeliverers(){
-        return userService.getAllDeliverers();
+    public ResponseEntity<?> getAllDeliverers(){
+        return ResponseEntity.ok(userService.getAllDeliverers());
     }
     @GetMapping("/customers")
-    public List<User> getAllCustomers(){
-        return userService.getAllCustomers();
+    public ResponseEntity<?> getAllCustomers(){
+        return ResponseEntity.ok(userService.getAllCustomers());
     }
 
     @GetMapping("/dispatchers")
-    public List<User> getAllDispatchers(){
-        return userService.getAllDispatchers();
+    public ResponseEntity<?> getAllDispatchers(){
+        return ResponseEntity.ok(userService.getAllDispatchers());
     }
 
 }
