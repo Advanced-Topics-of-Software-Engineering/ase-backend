@@ -143,5 +143,16 @@ public class DeliveryService {
         }
         return deliveryRepository.save(updatedDelivery);
     }
+
+    public Boolean delete(String deliveryID) throws Exception {
+        Delivery deliveryToDelete;
+        try {
+            deliveryToDelete = deliveryRepository.findById(deliveryID).orElseThrow(() -> new Exception("Delivery not found with id: " + deliveryID));
+        } catch (Exception e) {
+            return Boolean.FALSE;
+        }
+        deliveryRepository.delete(deliveryToDelete);
+        return Boolean.TRUE;
+    }
 }
 
