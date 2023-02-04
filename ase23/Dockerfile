@@ -7,6 +7,6 @@ COPY target/ /app
 # Set the working directory to the app directory
 WORKDIR /app
 CMD ["mvnw clean install"]
-# Run the application (assuming the application is a Spring Boot application with a executable JAR)
+# Run the application (assuming the application is a Spring Boot application with a executable )
 # -D skiptests
 ENTRYPOINT ["java", "-jar", "ase23-0.0.1-SNAPSHOT.jar"]
