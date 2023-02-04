@@ -61,6 +61,65 @@ public class DeliveryService {
         return matchedDelivery;
     }
 
+
+    public List<Delivery> getDeliveriesFromBoxId(String boxId) throws Exception {
+        if (boxId == null || boxId.isEmpty()) {
+            throw new Exception("Box ID is required");
+        }
+        List<Delivery> deliveries = this.getAllDeliveries();
+        List<Delivery> matchedDeliveries = deliveries.stream().filter(delivery ->
+                delivery.getBox().getId().equals(boxId)).collect(Collectors.toList());
+        return matchedDeliveries;
+    }
+
+    public List<Delivery> getCompletedDeliveriesOfBox(String boxID) throws Exception {
+        if (boxID == null || boxID.isEmpty()) {
+            throw new Exception("Box ID is required");
+        }
+        // If all the deliveries of this box is completed,
+        // Assign all these deliveries to deletedBox,
+        // Then delete this box.
+        // Else, throw an error.
+        List<Delivery> deliveries = this.getDeliveriesFromBoxId(boxID);
+        List<Delivery> completedDeliveries = deliveries.stream().filter(delivery ->
+                delivery.getStatus().equals("Completed")).toList();
+        if (completedDeliveries.isEmpty()) { // There exist incomplete boxes still
+            return List.of();
+        }
+        if (deliveries.size() > completedDeliveries.size()) { // Not every box is completed
+            return List.of();
+        }
+        return completedDeliveries;
+    }
+
+    public void assignGarbageBoxToCompletedDeliveries(List<Delivery> completedDeliveries) throws Exception {
+        String garbageBoxName = "DELETED_BOX";
+        Box garbageBox = boxService.findByName(garbageBoxName);
+        completedDeliveries.forEach(delivery ->
+                {
+                    try {
+                        this.updateBoxOfDelivery(
+                                    delivery.getId(),
+                                    garbageBox);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+        );
+    }
+    public void updateBoxOfDelivery(String deliveryID, Box box) throws Exception {
+        if (deliveryID == null || deliveryID.isEmpty()) {
+            throw new Exception("Delivery ID is required");
+        }
+        if (box.getId() == null) {
+            throw new Exception("Box ID is required");
+        }
+        Delivery updatedDelivery = this.getDeliveryById(deliveryID);
+        updatedDelivery.setBox(box);
+        deliveryRepository.save(updatedDelivery);
+    }
+
     public Delivery updateDeliveryByDeliveryID(String deliveryID, Delivery delivery) throws Exception {
         if (deliveryID == null || deliveryID.isEmpty()) {
             throw new Exception("Delivery ID is required");
@@ -70,13 +129,13 @@ public class DeliveryService {
             Box updatedBox = boxService.update(delivery.getBox().getId(), delivery.getBox());
             updatedDelivery.setBox(updatedBox);
         }
-        if (delivery.getCustomerID() != null && !delivery.getCustomerID().isEmpty()){
+        if (delivery.getCustomerID() != null && !delivery.getCustomerID().isEmpty()) {
             updatedDelivery.setCustomerID(delivery.getCustomerID());
         }
-        if (delivery.getDelivererID() != null && !delivery.getDelivererID().isEmpty()){
+        if (delivery.getDelivererID() != null && !delivery.getDelivererID().isEmpty()) {
             updatedDelivery.setDelivererID(delivery.getDelivererID());
         }
-        if (delivery.getStatus() != null  && !delivery.getStatus().isEmpty()) {
+        if (delivery.getStatus() != null && !delivery.getStatus().isEmpty()) {
             updatedDelivery.setStatus(delivery.getStatus());
         }
         if (delivery.getTrackingID() != null && !delivery.getStatus().isEmpty()) {
