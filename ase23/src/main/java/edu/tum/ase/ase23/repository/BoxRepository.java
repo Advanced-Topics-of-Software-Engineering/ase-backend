@@ -9,7 +9,6 @@ import java.util.Optional;
 public interface BoxRepository extends MongoRepository<Box, String> {
     public Optional<Box> findByName(String Name);
     public Optional<Box> findByStreetAddress(String StreetAddress);
-    public Optional<Box> findByAlive(Boolean Alive);
     public Optional<Box> findById(String Id);
 }
 
