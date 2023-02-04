@@ -87,7 +87,7 @@ public class User {
     }
 
     public String getRFIDToken() {
-        return password;
+        return RFIDToken;
     }
 
     public void setRFIDToken(String RFIDToken) {
