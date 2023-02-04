@@ -59,7 +59,7 @@ public class DeliveryController {
         if (!deliveryService.delete(deliveryID)) {
             return ResponseEntity
                     .badRequest()
-                    .body("Could not delete");
+                    .body("Could not delete, make sure that there is a delivery with ID: " + deliveryID);
         }
         return ResponseEntity.ok("Deleted delivery with id " + deliveryID + " successfully");
     }
