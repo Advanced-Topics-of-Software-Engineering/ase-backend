@@ -2,7 +2,7 @@
 FROM openjdk:19
 
 # Copy the target directory (which contains the built application) to the container
-COPY target/ /app
+#COPY target/ /app
 
 # Set the working directory to the app directory
 WORKDIR /app
