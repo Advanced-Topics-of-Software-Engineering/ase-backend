@@ -1,4 +1,4 @@
-FROM openjdk:19
+FROM yannoff/maven:3-openjdk-19
 WORKDIR /app
 RUN apt-get update -y && apt-get install -y maven
 RUN mvn clean install
