@@ -1,8 +1,6 @@
 package edu.tum.ase.ase23.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.Authenticator;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.RoleEnum;
 import edu.tum.ase.ase23.model.User;
@@ -11,22 +9,18 @@ import edu.tum.ase.ase23.payload.request.DeliveryCreateRequest;
 import edu.tum.ase.ase23.payload.response.MessageResponse;
 import edu.tum.ase.ase23.repository.DeliveryRepository;
 import edu.tum.ase.ase23.service.DeliveryService;
+import edu.tum.ase.ase23.service.EmailService;
 import edu.tum.ase.ase23.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +36,9 @@ public class DeliveryController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    EmailService emailService;
+
     @GetMapping("")
     public ResponseEntity<?> getAllDeliveries() {
         return ResponseEntity.ok(deliveryService.getAllDeliveries());
@@ -50,6 +47,8 @@ public class DeliveryController {
     @PostMapping("")
     public ResponseEntity<?> createDelivery(@RequestBody DeliveryCreateRequest deliveryCreateRequest) throws Exception {
         deliveryService.createDelivery(deliveryCreateRequest);
+        String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOOOK!
+        emailService.sendSimpleMail(sendMailTo, "Your Deliveries Updates!", "Hello, your delivery is ordered!");
         return ResponseEntity.ok(new MessageResponse("Success: Delivery created!"));
     }
 
@@ -139,12 +138,15 @@ public class DeliveryController {
     @GetMapping("deliverer/updateStatus/{trackingID}")
     public ResponseEntity<?> updateStatusToPickedUpByTrackingID(@PathVariable String trackingID) throws Exception {
         Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
-        String delivererID = delivery.getDelivererID();
+        String delivererID = delivery.getDelivererID(); //LOOKKK!
         String currentDelivererID = "63dbeaae6ad1cc79825978e5"; //will be deleted
         // current_delivererID = request.header.userid.
         if (currentDelivererID.equals(delivererID)) {
             if (delivery.getStatus().equals("ORDERED")) {
                 delivery.setStatus("PICKEDUP");
+                deliveryRepository.save(delivery);
+                String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOKK
+                emailService.sendSimpleMail(sendMailTo, "Updates of Your Delivery!", "Hello, your delivery is picked-up!");
                 return new ResponseEntity<>("Delivery with tracking ID : " + trackingID + "is picked-up" , HttpStatus.OK);
             }
         }
@@ -195,6 +197,8 @@ public class DeliveryController {
             {
                 delivery.setStatus("DELIVERED");
                 deliveryRepository.save(delivery);
+                String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOKK
+                emailService.sendSimpleMail(sendMailTo, "Updates of Your Delivery!", "Hello, your delivery is delivered!You can take your delivery from Box:"); //LOOOK
             });
             return ResponseEntity.ok("Your deliveries are delivered at box with boxID: " + boxID);
         }
@@ -206,6 +210,8 @@ public class DeliveryController {
                 delivery.setStatus("COMPLETED");
                 deliveryRepository.save(delivery);
             });
+            String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOKK
+            emailService.sendSimpleMail(sendMailTo, "Updates of Your Delivery!", "Hello, You picked your all deliveries!");
             return ResponseEntity.ok("All your deliveries are completed");
         }
         else{
