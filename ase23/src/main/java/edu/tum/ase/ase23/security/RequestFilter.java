@@ -73,19 +73,16 @@ public class RequestFilter extends OncePerRequestFilter {
                             new ParameterizedTypeReference<Object>() {
                             }
                     );
-                    logger.info("break");
                 }
 
 
                 response.setContentType(MediaType.APPLICATION_JSON.toString());
-                logger.info("break");
                 if (authResponse.getStatusCode().equals(HttpStatus.OK)) {
                     response.setStatus(HttpStatus.OK.value());
                     servletRequest.setAttribute("body",authResponse.getBody());
 //                    final ObjectMapper mapper = new ObjectMapper();
 //                    mapper.writeValue(response.getOutputStream(), authResponse.getBody());
 
-                    logger.info("break");
                 }
             }
         } catch (Exception e) {
