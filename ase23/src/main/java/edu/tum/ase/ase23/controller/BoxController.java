@@ -63,7 +63,7 @@ public class BoxController {
         if (!boxService.delete(Id)) {
             return ResponseEntity
                     .badRequest()
-                    .body("Could not delete: All deliveries of this box is not completed!");
+                    .body(new MessageResponse("Error: All deliveries of this box is not completed!"));
         }
         return ResponseEntity.ok().body(new MessageResponse("Success: Box with id " + Id + "has been deleted!"));
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.RoleEnum;
 import edu.tum.ase.ase23.model.User;
+import edu.tum.ase.ase23.payload.request.BoxCloseRequest;
 import edu.tum.ase.ase23.payload.request.BoxRequest;
 import edu.tum.ase.ase23.payload.request.DeliveryCreateRequest;
 import edu.tum.ase.ase23.payload.response.MessageResponse;
@@ -16,17 +17,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import java.util.*;
+
 
 @RestController
 @RequestMapping("/delivery")
 public class DeliveryController {
+    @Value("${edu.tum.ase.ase23.app.boxSecret}")
+    private String boxSecret;
+
+    @Value("${edu.tum.ase.ase23.app.authServer}")
+    private String authServer;
     @Autowired
     DeliveryRepository deliveryRepository;
 
@@ -76,12 +83,12 @@ public class DeliveryController {
     // Get Delivery information by trackingID
     @GetMapping("/trackingID/{trackingID}")
     public ResponseEntity<?> getDeliveryByTrackingID(@PathVariable String trackingID, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String body = request.getAttribute("body").toString().replace("=",":");
+        String body = request.getAttribute("body").toString().replace("=", ":");
         JSONObject bodyContentJson = new JSONObject(body);
         String userId = bodyContentJson.get("id").toString();
 
         String userRole = bodyContentJson.get("authorities").toString()
-                .substring(15,bodyContentJson.get("authorities").toString().length()-3);
+                .substring(15, bodyContentJson.get("authorities").toString().length() - 3);
 
 
         Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
@@ -89,13 +96,11 @@ public class DeliveryController {
             if (userId.equals(delivery.getCustomerID())) {
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(delivery);
             }
-        }
-        else if (RoleEnum.valueOf(userRole).equals(RoleEnum.ROLE_DELIVERER)) {
+        } else if (RoleEnum.valueOf(userRole).equals(RoleEnum.ROLE_DELIVERER)) {
             if (userId.equals(delivery.getDelivererID())) {
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(delivery);
             }
-        }
-        else if (RoleEnum.valueOf(userRole).equals(RoleEnum.ROLE_DISPATCHER)) {
+        } else if (RoleEnum.valueOf(userRole).equals(RoleEnum.ROLE_DISPATCHER)) {
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(delivery);
         }
         return ResponseEntity.badRequest()
@@ -107,10 +112,9 @@ public class DeliveryController {
     // Get deliveries of customer by box id
     @GetMapping("/customer/{customerID}/box/{boxID}")
     public ResponseEntity<?> getDeliveriesOfCustomerByBoxID(@PathVariable String customerID, @PathVariable String boxID) throws Exception {
-        if(deliveryService.getDeliveriesOfCustomerByBoxID(customerID, boxID) != null){
+        if (deliveryService.getDeliveriesOfCustomerByBoxID(customerID, boxID) != null) {
             return ResponseEntity.ok(deliveryService.getDeliveriesOfCustomerByBoxID(customerID, boxID));
-        }
-        else{
+        } else {
             return ResponseEntity.badRequest().body("customerId or BoxId cannot be null");
         }
 
@@ -119,10 +123,9 @@ public class DeliveryController {
     // Get deliveries of deliverer by box id
     @GetMapping("/deliverer/{delivererID}/box/{boxID}")
     public ResponseEntity<?> getDeliveriesOfDelivererByBoxID(@PathVariable String delivererID, @PathVariable String boxID) throws Exception {
-        if(deliveryService.getDeliveriesOfDelivererByBoxID(delivererID, boxID) != null){
+        if (deliveryService.getDeliveriesOfDelivererByBoxID(delivererID, boxID) != null) {
             return ResponseEntity.ok(deliveryService.getDeliveriesOfDelivererByBoxID(delivererID, boxID));
-        }
-        else{
+        } else {
             return ResponseEntity.badRequest().body("DelivererID or BoxId cannot be null");
 
         }
@@ -167,14 +170,12 @@ public class DeliveryController {
             if (UserType.equals("ROLE_DELIVERER")) {
                 List<Delivery> pickedUpDeliveries = deliveryService.getDeliveriesOfDelivererByStatus(userID, boxRequest.getBoxId(), "PICKEDUP");
                 if (!pickedUpDeliveries.isEmpty()) {
-                    List<String> DelivererIDsOfDeliveries = pickedUpDeliveries.stream().map(delivery -> delivery.getId()).toList();
-                    return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(DelivererIDsOfDeliveries);
+                    return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(pickedUpDeliveries);
                 }
             } else if (UserType.equals("ROLE_CUSTOMER")) {
                 List<Delivery> deliveredDeliveries = deliveryService.getDeliveriesOfCustomerByStatus(userID, boxRequest.getBoxId(), "DELIVERED");
                 if (!deliveredDeliveries.isEmpty()) {
-                    List<String> CustomerIDsOfDeliveries = deliveredDeliveries.stream().map(delivery -> delivery.getId()).toList();
-                    return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(CustomerIDsOfDeliveries);
+                    return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(deliveredDeliveries);
                 }
             }
             return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(new MessageResponse("Error: Something went wrong!"));
@@ -186,44 +187,97 @@ public class DeliveryController {
     }
 
     // After closing Box, update status of deliveries
-    @PostMapping("/box/close/{boxID}")
-    public ResponseEntity<?> updateStatusOfDeliveries(@PathVariable String boxID) throws Exception {
-        //List<Delivery> valid_deliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
-        List<Delivery> pickedUpDeliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("PICKEDUP")).collect(Collectors.toList());
-        List<Delivery> deliveredDeliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("DELIVERED")).collect(Collectors.toList());
+    @PostMapping("/box/close")
+    public ResponseEntity<?> updateStatusOfDeliveries(@RequestBody List<BoxCloseRequest> boxCloseRequestList, HttpServletRequest request, HttpServletResponse response){
+        //I will have delivery list.
 
-        if (!pickedUpDeliveries.isEmpty()){
-            pickedUpDeliveries.stream().forEach(delivery ->
-            {
-                delivery.setStatus("DELIVERED");
-                deliveryRepository.save(delivery);
-                String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOKK
-                emailService.sendSimpleMail(sendMailTo, "Updates of Your Delivery!", "Hello, your delivery is delivered!You can take your delivery from Box:"); //LOOOK
+        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            List<String> emailList = objectMapper.convertValue(request.getAttribute("body"), new TypeReference<List<String>>() {
+//            });
+//            Set<String> setWithoutDuplicates = new HashSet<>(emailList);
+//            List<String> listWithoutDuplicates = new ArrayList<>(setWithoutDuplicates);
+
+            Set<String> customerIdSet = new HashSet<>();
+
+            boxCloseRequestList.stream().forEach(boxCloseRequest -> {
+                        try {
+                            deliveryService.getDeliveriesFromBoxId(boxCloseRequest.getBoxId()).stream().forEach(delivery -> {
+                                if (boxCloseRequest.getBoxStatus().equals("PICKEDUP")) {
+                                    customerIdSet.add(delivery.getCustomerID());
+                                    delivery.setStatus("DELIVERED");
+                                    deliveryRepository.save(delivery);
+                                } else if (boxCloseRequest.getBoxStatus().equals("DELIVERED")) {
+                                    customerIdSet.add(delivery.getCustomerID());
+                                    delivery.setStatus("COMPLETED");
+                                    deliveryRepository.save(delivery);
+                                }
+                            });
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            );
+            customerIdSet.stream().forEach(customerId -> {
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("x-authentication", boxSecret);
+                RestTemplate restTemplate = new RestTemplate();
+                Map<String,String> restMap = new HashMap<>();
+                restMap.put("customerId", customerId);
+                HttpEntity<Map<String, String>> entity;
+                entity = new HttpEntity<>(restMap, headers);
+                ResponseEntity<Object> authResponse;
+                authResponse = restTemplate.exchange(
+                        authServer + "/delivery/box/getEmail",
+                        HttpMethod.POST,
+                        entity,
+                        new ParameterizedTypeReference<Object>() {
+                        });
+                //sendEmail authResponse.body
+                int a = 5;
             });
-            return ResponseEntity.ok("Your deliveries are delivered at box with boxID: " + boxID);
+//            listWithoutDuplicates.stream().forEach(email -> sendemail(email));
+            return ResponseEntity.ok().body(new MessageResponse("Success!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
-
-        else if (!deliveredDeliveries.isEmpty()){
-            deliveredDeliveries.stream().forEach(delivery ->
-            {
-                delivery.setStatus("COMPLETED");
-                deliveryRepository.save(delivery);
-            });
-            String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOKK
-            emailService.sendSimpleMail(sendMailTo, "Updates of Your Delivery!", "Hello, You picked your all deliveries!");
-            return ResponseEntity.ok("All your deliveries are completed");
-        }
-        else{
-            return ResponseEntity.ok("");
-        }
+//        try {
+//            RestTemplate restTemplate = new RestTemplate();
+//            ResponseEntity<Object> authResponse;
+//            List<Delivery> allDeliveries = deliveryService.getDeliveriesFromBoxId(boxRequest.getBoxId());
+//            if (boxRequest.getRoleEnum().toString().equals("DELIVERER")) {
+//                allDeliveries = allDeliveries.stream()
+//                        .filter(delivery -> delivery.getStatus().equals("PICKEDUP"))
+//                        .filter(delivery -> delivery.getDelivererID().equals(boxRequest.getUserId()))
+//                        .toList();
+//                allDeliveries.stream().forEach(delivery -> {
+//                    delivery.setStatus("DELIVERED");
+//                    deliveryRepository.save(delivery);
+//                });
+//                //Send mail
+//                return ResponseEntity.ok().body(new MessageResponse("Success: Deliveries delivered to: " + boxRequest.getBoxId()));
+//            } else if (boxRequest.getRoleEnum().toString().equals("CUSTOMER")) {
+//                allDeliveries = allDeliveries.stream().filter(delivery -> delivery.getStatus().equals("DELIVERED")).toList();
+//                allDeliveries.stream().forEach(delivery -> {
+//                    delivery.setStatus("COMPLETED");
+//                    deliveryRepository.save(delivery);
+//                });
+//                // Send mail
+//                return ResponseEntity.ok().body(new MessageResponse("Success: Deliveries collected from: " + boxCloseRequest.getBoxId()));
+//            }
+//            return ResponseEntity.badRequest().body(new MessageResponse("Error: Something went wrong!"));
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+//        }
     }
+
     @PostMapping("/delete/{deliveryID}")
     public ResponseEntity<?> deleteDelivery(@PathVariable String deliveryID) throws Exception {
         if (!deliveryService.delete(deliveryID)) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Could not delete, make sure that there is a delivery with ID: " + deliveryID) );
+                    .body(new MessageResponse("Error: Could not delete, make sure that there is a delivery with ID: " + deliveryID));
         }
         return ResponseEntity.ok(new MessageResponse("Success: Deleted delivery with id " + deliveryID + "!"));
     }
