@@ -1,10 +1,14 @@
 package edu.tum.ase.ase23.model;
 
 import com.mongodb.lang.NonNull;
+import edu.tum.ase.ase23.util.StringEncoder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.security.NoSuchAlgorithmException;
+
 
 @Document(collection = "deliveries")
 public class Delivery {
@@ -25,16 +29,20 @@ public class Delivery {
     @Indexed(unique = true)
     @NonNull
     private String trackingID;
+    private StringEncoder StringEncoder;
 
     protected Delivery() {}
 
-    public Delivery(Box box, String customerID, String delivererID) {
+
+    public Delivery(Box box, String customerID, String delivererID) throws NoSuchAlgorithmException {
         this.box = box;
         this.customerID = customerID;
         this.delivererID = delivererID;
         this.status = "ORDERED";
-        this.trackingID = customerID+delivererID;
+        this.trackingID = StringEncoder.encode(customerID, delivererID);
+
     }
+
 
     //getters and setters
 
@@ -45,6 +53,8 @@ public class Delivery {
     public Box getBox() {
         return box;
     }
+
+    public String getStatus() { return status; }
 
     public void setBox(Box box) {
         this.box = box;
@@ -66,10 +76,6 @@ public class Delivery {
         this.delivererID = delivererID;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public void setStatus(String status) {
         this.status = status;
     }
@@ -78,8 +84,8 @@ public class Delivery {
         return trackingID;
     }
 
-    public void setTrackingID(String trackingID) {
-        this.trackingID = trackingID;
+    public void setTrackingID(String customerID, String delivererID) throws NoSuchAlgorithmException {
+        this.trackingID = StringEncoder.encode(customerID, delivererID);
     }
 
 }
