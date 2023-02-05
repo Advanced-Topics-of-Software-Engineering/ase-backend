@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.mongodb.client.MongoClient;
-import edu.tum.ase.ase23.config.CorsConfig;
 import edu.tum.ase.ase23.model.Box;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.User;
