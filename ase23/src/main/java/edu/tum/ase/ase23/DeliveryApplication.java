@@ -47,7 +47,7 @@ public class DeliveryApplication implements CommandLineRunner {
         Box box = boxService.findByName("Box#1");
         User customer = userService.getAllCustomers().get(0);
         User deliverer = userService.getAllDeliverers().get(0);
-        String status = "Ordered";
+        String status = "ORDERED";
         String trackingID = "TrackingIDXD";
         Delivery delivery = deliveryService.createDelivery(
                 new Delivery(box, customer, deliverer, status, trackingID)

@@ -32,7 +32,7 @@ public class Delivery {
         this.box = box;
         this.customerID = customerID;
         this.delivererID = delivererID;
-        this.status = "Ordered";
+        this.status = "ORDERED";
         this.trackingID = trackingID;
     }
 

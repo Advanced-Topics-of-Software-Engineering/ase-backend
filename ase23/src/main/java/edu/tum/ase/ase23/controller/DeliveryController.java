@@ -100,7 +100,7 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery));
     }
 
-    // Update Delivery Status from Ordered to PickedUp
+    // Update Delivery Status from ORDERED to PICKEDUP
     @GetMapping("deliverer/updateStatus/{trackingID}")
     public ResponseEntity<?> updateStatusToPickedUpByTrackingID(@PathVariable String trackingID) throws Exception {
         Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
@@ -108,8 +108,8 @@ public class DeliveryController {
         String currentDelivererID = "63dbeaae6ad1cc79825978e5"; //will be deleted
         // current_delivererID = request.header.userid.
         if (currentDelivererID.equals(delivererID)) {
-            if (delivery.getStatus().equals("Ordered")) {
-                delivery.setStatus("PickedUp");
+            if (delivery.getStatus().equals("ORDERED")) {
+                delivery.setStatus("PICKEDUP");
                 return new ResponseEntity<>("Delivery with tracking ID : " + trackingID + "is picked-up" , HttpStatus.OK);
             }
         }
@@ -124,7 +124,7 @@ public class DeliveryController {
         //ADD There is no user return bad request unauthorized user
         String UserType = user.getRoles().stream().findAny().get().getRoleEnum().toString();
         if (UserType.equals("ROLE_DELIVERER")) {
-            List<Delivery> pickedUpDeliveries = this.deliveryService.getDeliveriesOfDelivererByStatus(userID, BoxID, "PickedUp");
+            List<Delivery> pickedUpDeliveries = this.deliveryService.getDeliveriesOfDelivererByStatus(userID, BoxID, "PICKEDUP");
             if (!pickedUpDeliveries.isEmpty()) {
                 List <String> DelivererIDsOfDeliveries = new ArrayList<String>();
                 pickedUpDeliveries.forEach( delivery -> DelivererIDsOfDeliveries.add(delivery.getId()));
@@ -133,7 +133,7 @@ public class DeliveryController {
 
         }
         else if (UserType.equals("ROLE_CUSTOMER")) {
-            List<Delivery> deliveredDeliveries = this.deliveryService.getDeliveriesOfCustomerByStatus(userID, BoxID, "Delivered");
+            List<Delivery> deliveredDeliveries = this.deliveryService.getDeliveriesOfCustomerByStatus(userID, BoxID, "DELIVERED");
             if (!deliveredDeliveries.isEmpty()) {
                 List <String> CustomerIDsOfDeliveries = new ArrayList<String>();
                 deliveredDeliveries.forEach( delivery -> CustomerIDsOfDeliveries.add(delivery.getId()));
@@ -148,13 +148,13 @@ public class DeliveryController {
     @PostMapping("/box/close/{boxID}")
     public ResponseEntity<?> updateStatusOfDeliveries(@PathVariable String boxID) throws Exception {
         //List<Delivery> valid_deliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
-        List<Delivery> pickedUpDeliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("PickedUp")).collect(Collectors.toList());
-        List<Delivery> deliveredDeliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("Delivered")).collect(Collectors.toList());
+        List<Delivery> pickedUpDeliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("PICKEDUP")).collect(Collectors.toList());
+        List<Delivery> deliveredDeliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("DELIVERED")).collect(Collectors.toList());
 
         if (!pickedUpDeliveries.isEmpty()){
             pickedUpDeliveries.stream().forEach(delivery ->
             {
-                delivery.setStatus("Delivered");
+                delivery.setStatus("DELIVERED");
                 deliveryRepository.save(delivery);
             });
             return ResponseEntity.ok("Your deliveries are delivered at box with boxID: " + boxID);
@@ -164,7 +164,7 @@ public class DeliveryController {
         else if (!deliveredDeliveries.isEmpty()){
             deliveredDeliveries.stream().forEach(delivery ->
             {
-                delivery.setStatus("Completed");
+                delivery.setStatus("COMPLETED");
                 deliveryRepository.save(delivery);
             });
             return ResponseEntity.ok("All your deliveries are completed");

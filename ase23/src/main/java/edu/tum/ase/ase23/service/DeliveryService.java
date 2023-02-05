@@ -83,7 +83,7 @@ public class DeliveryService {
         // Else, throw an error.
         List<Delivery> deliveries = this.getDeliveriesFromBoxId(boxID);
         List<Delivery> completedDeliveries = deliveries.stream().filter(delivery ->
-                delivery.getStatus().equals("Completed")).toList();
+                delivery.getStatus().equals("COMPLETED")).toList();
         if (completedDeliveries.isEmpty()) { // There exist incomplete boxes still
             return List.of();
         }
