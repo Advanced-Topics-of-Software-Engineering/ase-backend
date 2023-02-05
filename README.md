@@ -23,7 +23,7 @@ Google Cloud Run deployment has all the required configurations by default.
 
 You have Docker installed in your machine. You cloned this repository to your local environment.
 
-## Installing
+## Docker
 
 A step by step series of examples that tell you how to get a development env running
 
