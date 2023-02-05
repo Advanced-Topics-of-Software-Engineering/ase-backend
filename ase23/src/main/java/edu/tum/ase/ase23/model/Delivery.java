@@ -37,8 +37,8 @@ public class Delivery {
         this.box = box;
         this.customerID = customerID;
         this.delivererID = delivererID;
-        this.setStatus("ORDERED");
-        this.setTrackingID(customerID, delivererID);
+        this.status = "ORDERED";
+        this.trackingID = StringEncoder.encode(customerID, delivererID);
     }
 
 
