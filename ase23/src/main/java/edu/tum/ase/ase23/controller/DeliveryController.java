@@ -1,21 +1,18 @@
 package edu.tum.ase.ase23.controller;
 
-import com.sun.net.httpserver.Authenticator;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.User;
 import edu.tum.ase.ase23.payload.request.DeliveryCreateRequest;
 import edu.tum.ase.ase23.payload.response.MessageResponse;
 import edu.tum.ase.ase23.repository.DeliveryRepository;
 import edu.tum.ase.ase23.service.DeliveryService;
+import edu.tum.ase.ase23.service.EmailService;
 import edu.tum.ase.ase23.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +29,9 @@ public class DeliveryController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    EmailService emailService;
 
     @GetMapping("")
     public ResponseEntity<?> getAllDeliveries() {
