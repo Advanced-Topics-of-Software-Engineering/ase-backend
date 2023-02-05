@@ -29,7 +29,6 @@ public class Delivery {
     @Indexed(unique = true)
     @NonNull
     private String trackingID;
-    private StringEncoder StringEncoder;
 
     protected Delivery() {}
 
@@ -39,8 +38,8 @@ public class Delivery {
         this.customerID = customerID;
         this.delivererID = delivererID;
         this.status = "ORDERED";
-        this.trackingID = StringEncoder.encode(customerID, delivererID);
-
+        StringEncoder stringEncoder = new StringEncoder();
+        this.trackingID = stringEncoder.encode(customerID, delivererID);
     }
 
 
