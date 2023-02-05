@@ -133,19 +133,20 @@ public class DeliveryController {
     }
 
     // Update Delivery Status from ORDERED to PICKEDUP
-    @GetMapping("deliverer/updateStatus/{trackingID}")
+    @GetMapping("/deliverer/updateStatus/{trackingID}")
     public ResponseEntity<?> updateStatusToPickedUpByTrackingID(@PathVariable String trackingID) throws Exception {
-        Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
-        String delivererID = delivery.getDelivererID();
-        String currentDelivererID = "63dbeaae6ad1cc79825978e5"; //will be deleted
-        // current_delivererID = request.header.userid.
-        if (currentDelivererID.equals(delivererID)) {
+        try{
+            Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
             if (delivery.getStatus().equals("ORDERED")) {
                 delivery.setStatus("PICKEDUP");
-                return new ResponseEntity<>("Delivery with tracking ID : " + trackingID + "is picked-up", HttpStatus.OK);
+                deliveryRepository.save(delivery);
+
+                return ResponseEntity.ok().body(new MessageResponse("Success: Status updated!"));
             }
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Something went wrong!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Something went wrong!"));
         }
-        return ResponseEntity.badRequest().body("You have scanned the wrong box!");
     }
 
     // Box validation to open with RFID Token by User type
