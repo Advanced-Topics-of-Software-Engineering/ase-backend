@@ -51,7 +51,6 @@ public class DeliveryController {
     public ResponseEntity<?> createDelivery(@RequestBody DeliveryCreateRequest deliveryCreateRequest) throws Exception {
         deliveryService.createDelivery(deliveryCreateRequest);
         return ResponseEntity.ok(new MessageResponse("Success: Delivery created!"));
-        // new Delivery(dto.get(userId), .. , )
     }
 
     @GetMapping("/deliverer/{delivererId}")
