@@ -43,15 +43,6 @@ public class DeliveryService {
                 delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
     }
 
-    public List<Delivery> getDeliveriesFromBoxId(String boxId) throws Exception {
-        if (boxId == null || boxId.isEmpty()) {
-            throw new Exception("Box ID is required");
-        }
-        List<Delivery> deliveries = this.getAllDeliveries();
-        return deliveries.stream().filter(delivery ->
-                delivery.getBox().getId().equals(boxId)).collect(Collectors.toList());
-    }
-
     public Delivery getDeliveryById(String deliveryId) throws Exception {
         if (deliveryId == null || deliveryId.isEmpty()) {
             throw new Exception("Delivery ID is required");
@@ -71,7 +62,6 @@ public class DeliveryService {
                 delivery.getTrackingID().equals(trackingID)).findFirst().orElse(null);
         return matchedDelivery;
     }
-
 
     public List<Delivery> getDeliveriesFromBoxId(String boxId) throws Exception {
         if (boxId == null || boxId.isEmpty()) {
