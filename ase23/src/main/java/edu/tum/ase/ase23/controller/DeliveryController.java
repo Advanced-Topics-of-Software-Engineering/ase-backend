@@ -1,6 +1,5 @@
 package edu.tum.ase.ase23.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.RoleEnum;
@@ -11,19 +10,21 @@ import edu.tum.ase.ase23.payload.request.DeliveryCreateRequest;
 import edu.tum.ase.ase23.payload.response.MessageResponse;
 import edu.tum.ase.ase23.repository.DeliveryRepository;
 import edu.tum.ase.ase23.service.DeliveryService;
+import edu.tum.ase.ase23.service.EmailService;
 import edu.tum.ase.ase23.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.*;
+
 
 @RestController
 @RequestMapping("/delivery")
@@ -42,6 +43,9 @@ public class DeliveryController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    EmailService emailService;
+
     @GetMapping("")
     public ResponseEntity<?> getAllDeliveries() {
         return ResponseEntity.ok(deliveryService.getAllDeliveries());
@@ -50,8 +54,9 @@ public class DeliveryController {
     @PostMapping("")
     public ResponseEntity<?> createDelivery(@RequestBody DeliveryCreateRequest deliveryCreateRequest) throws Exception {
         deliveryService.createDelivery(deliveryCreateRequest);
+        String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOOOK!
+        emailService.sendSimpleMail(sendMailTo, "Your Deliveries Updates!", "Hello, your delivery is ordered!");
         return ResponseEntity.ok(new MessageResponse("Success: Delivery created!"));
-        // new Delivery(dto.get(userId), .. , )
     }
 
     @GetMapping("/deliverer/{delivererId}")
@@ -135,13 +140,16 @@ public class DeliveryController {
     // Update Delivery Status from ORDERED to PICKEDUP
     @GetMapping("/deliverer/updateStatus/{trackingID}")
     public ResponseEntity<?> updateStatusToPickedUpByTrackingID(@PathVariable String trackingID) throws Exception {
+
         try{
             Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
             if (delivery.getStatus().equals("ORDERED")) {
                 delivery.setStatus("PICKEDUP");
                 deliveryRepository.save(delivery);
-
+                String sendMailTo = "soydemir.ihsan@gmail.com"; //LOOKK
+                emailService.sendSimpleMail(sendMailTo, "Updates of Your Delivery!", "Hello, your delivery is picked-up!");
                 return ResponseEntity.ok().body(new MessageResponse("Success: Status updated!"));
+
             }
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Something went wrong!"));
         } catch (Exception e) {
@@ -263,7 +271,6 @@ public class DeliveryController {
 //        } catch (Exception e) {
 //            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 //        }
-
     }
 
     @PostMapping("/delete/{deliveryID}")

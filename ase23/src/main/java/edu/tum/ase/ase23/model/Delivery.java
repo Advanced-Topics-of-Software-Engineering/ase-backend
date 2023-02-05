@@ -29,7 +29,7 @@ public class Delivery {
     @Indexed(unique = true)
     @NonNull
     private String trackingID;
-    private StringEncoder StringEncoder;
+    private StringEncoder stringEncoder;
 
     protected Delivery() {}
 
@@ -39,8 +39,8 @@ public class Delivery {
         this.customerID = customerID;
         this.delivererID = delivererID;
         this.status = "ORDERED";
-        this.trackingID = StringEncoder.encode(customerID, delivererID);
-
+        this.stringEncoder = new StringEncoder();
+        this.trackingID = this.stringEncoder.encode(customerID, delivererID);
     }
 
 
@@ -84,8 +84,5 @@ public class Delivery {
         return trackingID;
     }
 
-    public void setTrackingID(String customerID, String delivererID) throws NoSuchAlgorithmException {
-        this.trackingID = StringEncoder.encode(customerID, delivererID);
-    }
 
 }
