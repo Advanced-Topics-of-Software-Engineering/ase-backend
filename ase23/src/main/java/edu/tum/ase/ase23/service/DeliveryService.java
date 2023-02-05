@@ -4,6 +4,7 @@ package edu.tum.ase.ase23.service;
 import edu.tum.ase.ase23.model.Box;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.User;
+import edu.tum.ase.ase23.payload.request.DeliveryCreateRequest;
 import edu.tum.ase.ase23.repository.DeliveryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,10 @@ public class DeliveryService {
         return deliveryRepository.findAll();
     }
 
-    public Delivery createDelivery(Delivery delivery) {
-        return deliveryRepository.save(delivery);
+    public Delivery createDelivery(DeliveryCreateRequest delivery) throws Exception {
+        Box box = boxService.findById(delivery.getBoxID());
+        Delivery newDelivery = new Delivery(box, delivery.getCustomerID(), delivery.getDelivererID());
+        return deliveryRepository.save(newDelivery);
     }
 
     public List<Delivery> getDeliveriesOfUserFromCustomerId(String customerId) throws Exception {
@@ -84,12 +87,6 @@ public class DeliveryService {
         List<Delivery> deliveries = this.getDeliveriesFromBoxId(boxID);
         List<Delivery> completedDeliveries = deliveries.stream().filter(delivery ->
                 delivery.getStatus().equals("COMPLETED")).toList();
-        if (completedDeliveries.isEmpty()) { // There exist incomplete boxes still
-            return List.of();
-        }
-        if (deliveries.size() > completedDeliveries.size()) { // Not every box is completed
-            return List.of();
-        }
         return completedDeliveries;
     }
 

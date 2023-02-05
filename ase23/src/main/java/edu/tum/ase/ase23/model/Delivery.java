@@ -33,12 +33,14 @@ public class Delivery {
 
     protected Delivery() {}
 
+
     public Delivery(Box box, String customerID, String delivererID) throws NoSuchAlgorithmException {
         this.box = box;
         this.customerID = customerID;
         this.delivererID = delivererID;
         this.status = "ORDERED";
         this.trackingID = StringEncoder.encode(customerID, delivererID);
+
     }
 
 

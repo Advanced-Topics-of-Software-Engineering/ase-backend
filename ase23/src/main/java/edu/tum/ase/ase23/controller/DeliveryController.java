@@ -2,9 +2,8 @@ package edu.tum.ase.ase23.controller;
 
 import com.sun.net.httpserver.Authenticator;
 import edu.tum.ase.ase23.model.Delivery;
-import edu.tum.ase.ase23.model.User;
-import edu.tum.ase.ase23.payload.request.UpdateStatusDto;
-import edu.tum.ase.ase23.repository.DeliveryRepository;
+import edu.tum.ase.ase23.payload.request.DeliveryCreateRequest;
+import edu.tum.ase.ase23.payload.response.MessageResponse;
 import edu.tum.ase.ase23.service.DeliveryService;
 import edu.tum.ase.ase23.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +37,9 @@ public class DeliveryController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createDelivery(@RequestBody Delivery Delivery) {
-        return ResponseEntity.ok(deliveryService.createDelivery(Delivery));
+    public ResponseEntity<?> createDelivery(@RequestBody DeliveryCreateRequest deliveryCreateRequest) throws Exception {
+        deliveryService.createDelivery(deliveryCreateRequest);
+        return ResponseEntity.ok(new MessageResponse("Success: Delivery created!"));
         // new Delivery(dto.get(userId), .. , )
     }
 
@@ -178,9 +178,9 @@ public class DeliveryController {
         if (!deliveryService.delete(deliveryID)) {
             return ResponseEntity
                     .badRequest()
-                    .body("Could not delete, make sure that there is a delivery with ID: " + deliveryID);
+                    .body(new MessageResponse("Error: Could not delete, make sure that there is a delivery with ID: " + deliveryID) );
         }
-        return ResponseEntity.ok("Deleted delivery with id " + deliveryID + " successfully");
+        return ResponseEntity.ok(new MessageResponse("Success: Deleted delivery with id " + deliveryID + "!"));
     }
 }
 
