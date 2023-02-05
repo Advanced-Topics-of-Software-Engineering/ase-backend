@@ -4,9 +4,11 @@ import com.sun.net.httpserver.Authenticator;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.User;
 import edu.tum.ase.ase23.payload.request.UpdateStatusDto;
+import edu.tum.ase.ase23.repository.DeliveryRepository;
 import edu.tum.ase.ase23.service.DeliveryService;
 import edu.tum.ase.ase23.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/delivery")
 public class DeliveryController {
+    @Autowired
+    DeliveryRepository deliveryRepository;
 
     @Autowired
     DeliveryService deliveryService;
@@ -141,7 +145,32 @@ public class DeliveryController {
 
     }
 
-    
+    // After closing Box, update status of deliveries
+    @PostMapping("/box/close/{boxID}")
+    public ResponseEntity<?> updateStatusOfDeliveries(@PathVariable String boxID) throws Exception {
+        //List<Delivery> valid_deliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
+        List<Delivery> pickedUp_deliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("PickedUp")).collect(Collectors.toList());
+        List<Delivery> delivered_deliveries = deliveryService.getDeliveriesFromBoxId(boxID).stream().filter(delivery -> delivery.getStatus().equals("Delivered")).collect(Collectors.toList());
+        if (!pickedUp_deliveries.isEmpty()){
+            pickedUp_deliveries.stream().forEach(delivery ->
+            {
+                delivery.setStatus("Delivered");
+                deliveryRepository.save(delivery);
+            });
+            return ResponseEntity.ok("Your deliveries are delivered at box with boxID: " + boxID);
+        }
+        else if (!delivered_deliveries.isEmpty()){
+            delivered_deliveries.stream().forEach(delivery ->
+            {
+                delivery.setStatus("Completed");
+                deliveryRepository.save(delivery);
+            });
+            return ResponseEntity.ok("All your deliveries are completed");
+        }
+        else{
+            return ResponseEntity.ok("");
+        }
+    }
 }
 
 
