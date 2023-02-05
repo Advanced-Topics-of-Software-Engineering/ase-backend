@@ -7,11 +7,6 @@ public class UpdateStatusDto {
     @NotBlank
     private List<String> deliveryIDList;
 
-
-    public UpdateStatusDto(@NotBlank List<String> deliveryIDList) {
-        this.deliveryIDList = deliveryIDList;
-    }
-
     public List<String> getDeliveryIDList() {
         return deliveryIDList;
     }
