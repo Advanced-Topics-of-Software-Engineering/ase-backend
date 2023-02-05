@@ -32,7 +32,7 @@ public class Delivery {
         this.box = box;
         this.customerID = customerID;
         this.delivererID = delivererID;
-        this.status = "Ordered";
+        this.status = "ORDERED";
         this.trackingID = trackingID;
     }
 
@@ -45,6 +45,8 @@ public class Delivery {
     public Box getBox() {
         return box;
     }
+
+    public String getStatus() { return status; }
 
     public void setBox(Box box) {
         this.box = box;
@@ -64,10 +66,6 @@ public class Delivery {
 
     public void setDelivererID(String delivererID) {
         this.delivererID = delivererID;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public void setStatus(String status) {
