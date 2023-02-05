@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/box")
 public class BoxController {
@@ -35,11 +33,6 @@ public class BoxController {
         return ResponseEntity.ok(boxService.findByStreetAddress(StreetAddress));
     }
 
-    @GetMapping("/status/{Alive}")
-    public ResponseEntity<?> findBoxAllAlive(@PathVariable Boolean Alive) throws Exception {
-        return ResponseEntity.ok(boxService.findAllAlive(Alive));
-    }
-
     @GetMapping("/{Id}")
     public ResponseEntity<?> findBoxById(@PathVariable String Id) throws Exception {
         return ResponseEntity.ok(boxService.findById(Id));
@@ -53,12 +46,12 @@ public class BoxController {
 
     @PostMapping("/delete/{Id}")
     public ResponseEntity<?> deleteBox(@PathVariable String Id) throws Exception {
-        Box deletedBox = boxService.delete(Id);
-        // If all of the deliveries of this box is completed,
-        // Assign all these deliveries to deletedBox,
-        // Then delete this box.
-        // Else, throw an error.
-        return ResponseEntity.ok(deletedBox);
+        if (!boxService.delete(Id)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Could not delete: All deliveries of this box is not completed!");
+        }
+        return ResponseEntity.ok("Deleted box with " + Id + " successfully");
     }
 
 }

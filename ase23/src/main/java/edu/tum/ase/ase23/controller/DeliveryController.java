@@ -100,7 +100,6 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.updateDeliveryByDeliveryID(deliveryID, delivery));
     }
 
-
     // Update Delivery Status from Ordered to PickedUp
     @GetMapping("deliverer/updateStatus/{trackingID}")
     public ResponseEntity<?> updateStatusToPickedUpByTrackingID(@PathVariable String trackingID) throws Exception {
@@ -181,6 +180,15 @@ public class DeliveryController {
         else{
             return ResponseEntity.ok("");
         }
+    }
+    @PostMapping("/delete/{deliveryID}")
+    public ResponseEntity<?> deleteDelivery(@PathVariable String deliveryID) throws Exception {
+        if (!deliveryService.delete(deliveryID)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Could not delete, make sure that there is a delivery with ID: " + deliveryID);
+        }
+        return ResponseEntity.ok("Deleted delivery with id " + deliveryID + " successfully");
     }
 }
 
