@@ -37,4 +37,8 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new Exception("User cannot find by id " + id));
     }
 
+    public User getUserByRFIDToken(String RFIDToken) throws Exception {
+        return userRepository.findByRFIDToken(RFIDToken).orElseThrow(() -> new Exception("User cannot find by RFID ID " + RFIDToken));
+    }
+
 }

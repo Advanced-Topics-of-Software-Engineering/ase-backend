@@ -5,6 +5,7 @@ import edu.tum.ase.ase23.model.Box;
 import edu.tum.ase.ase23.model.Delivery;
 import edu.tum.ase.ase23.model.User;
 import edu.tum.ase.ase23.repository.DeliveryRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,8 +96,10 @@ public class DeliveryService {
         return deliveryRepository.save(updatedDelivery);
     }
 
-
     public List<Delivery> getDeliveriesOfCustomerByBoxID(String customerID, String boxID) throws Exception {
+        if (customerID == null || customerID.isEmpty() || boxID == null || boxID.isEmpty()) {
+            return null;
+        }
         List<Delivery> deliveriesOfCustomer = this.getDeliveriesOfUserFromCustomerId(customerID);
         List<Delivery> deliveriesOfCustomerAtSameBox = deliveriesOfCustomer.stream().filter(delivery ->
                 delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
@@ -104,15 +107,10 @@ public class DeliveryService {
         // Filter deliveries of the customer by boxID and return all deliveries of user at the same box.
     }
 
-    public List<Delivery> getDeliveriesAtSameBoxOfCustomerByStatus(String customerID, String boxID, String status) throws Exception {
-        List<Delivery> deliveriesOfCustomerAtSameBox = this.getDeliveriesOfCustomerByBoxID(customerID, boxID);
-        List <Delivery> deliveriesOfCustomerAtSameBoxAsStatus = deliveriesOfCustomerAtSameBox.stream().filter(delivery ->
-                delivery.getStatus().equals(status)).collect(Collectors.toList());
-        return deliveriesOfCustomerAtSameBoxAsStatus;
-        // Filter deliveries of the customer by boxID and return all deliveries of user at the same box as Box Status.
-    }
-
     public List<Delivery> getDeliveriesOfDelivererByBoxID(String delivererID, String boxID) throws Exception {
+        if (delivererID == null || delivererID.isEmpty() || boxID == null || boxID.isEmpty()) {
+            return null;
+        }
         List<Delivery> deliveriesOfDeliverer = this.getDeliveriesOfUserFromDelivererId(delivererID);
         List<Delivery> deliveriesOfDelivererAtSameBox = deliveriesOfDeliverer.stream().filter(delivery ->
                 delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
@@ -120,13 +118,34 @@ public class DeliveryService {
         // Filter deliveries of the deliverer by boxID and return all deliveries of user at the same box.
     }
 
-    public List<Delivery> getDeliveriesAtSameBoxOfDelivererByStatus(String delivererID, String boxID, String status) throws Exception {
+    public List<Delivery> getDeliveriesOfCustomerByStatus(String customerID, String boxID, String status) throws Exception {
+        List<Delivery> deliveriesOfCustomerAtSameBox = this.getDeliveriesOfCustomerByBoxID(customerID, boxID);
+        List<Delivery> deliveriesOfCustomerAtSameBoxAsStatus = deliveriesOfCustomerAtSameBox.stream().filter(delivery ->
+                delivery.getStatus().equals(status)).collect(Collectors.toList());
+        return deliveriesOfCustomerAtSameBoxAsStatus;
+        // Filter deliveries of the customer by boxID and return all deliveries of user at the same box as Box Status.
+    }
+
+    public List<Delivery> getDeliveriesOfDelivererByStatus(String delivererID, String boxID, String status) throws Exception {
         List<Delivery> deliveriesOfDelivererAtSameBox = this.getDeliveriesOfDelivererByBoxID(delivererID, boxID);
         List <Delivery> deliveriesOfDelivererAtSameBoxAsStatus = deliveriesOfDelivererAtSameBox.stream().filter(delivery ->
                 delivery.getStatus().equals(status)).collect(Collectors.toList());
         return deliveriesOfDelivererAtSameBoxAsStatus;
         // Filter deliveries of the deliverer by boxID and return all deliveries of user at the same box as box status.
     }
+
+    /*public Delivery updateStatusToPickedUpByTrackingID(String trackingID) throws Exception {
+        Delivery delivery = getDeliveryByTrackingID(trackingID);
+        String delivererID = delivery.getDelivererID();
+        String currentDelivererID = "63dbeaae6ad1cc79825978"; //will be deleted
+        // current_delivererID = request.header.userid.
+        if(currentDelivererID.equals(delivererID)) {
+            delivery.setStatus("PickedUp");
+        }
+        return delivery;
+    }*/
+
+
 
 }
 

@@ -1,12 +1,22 @@
 package edu.tum.ase.ase23.controller;
 
+import com.sun.net.httpserver.Authenticator;
 import edu.tum.ase.ase23.model.Delivery;
+import edu.tum.ase.ase23.model.User;
+import edu.tum.ase.ase23.payload.request.UpdateStatusDto;
 import edu.tum.ase.ase23.service.DeliveryService;
+import edu.tum.ase.ase23.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/delivery")
@@ -14,6 +24,9 @@ public class DeliveryController {
 
     @Autowired
     DeliveryService deliveryService;
+
+    @Autowired
+    UserService userService;
 
     @GetMapping("")
     public ResponseEntity<?> getAllDeliveries() {
@@ -28,8 +41,13 @@ public class DeliveryController {
 
     @GetMapping("/deliverer/{delivererId}")
     public ResponseEntity<?> getDeliveriesOfUserFromDelivererId(@PathVariable String delivererId) throws Exception {
+        if (deliveryService.getDeliveriesOfUserFromDelivererId(delivererId).equals(null)
+                || deliveryService.getDeliveriesOfUserFromDelivererId(delivererId).isEmpty()) {
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body("{Error: There is no delivery to deliverer with " + delivererId + "}");
+        }
         return ResponseEntity.ok(deliveryService.getDeliveriesOfUserFromDelivererId(delivererId));
     }
+
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getDeliveriesOfUserFromCustomerId(@PathVariable String customerId) throws Exception {
         return ResponseEntity.ok(deliveryService.getDeliveriesOfUserFromCustomerId(customerId));
@@ -39,6 +57,7 @@ public class DeliveryController {
     @GetMapping("/id/{deliveryId}")
     public ResponseEntity<?> getDeliveryById(@PathVariable String deliveryId) throws Exception {
         return ResponseEntity.ok(deliveryService.getDeliveryById(deliveryId));
+
     }
 
     // Get Delivery information by trackingID
@@ -50,23 +69,25 @@ public class DeliveryController {
     // Get deliveries of customer by box id
     @GetMapping("/customer/{customerID}/box/{boxID}")
     public ResponseEntity<?> getDeliveriesOfCustomerByBoxID(@PathVariable String customerID, @PathVariable String boxID) throws Exception {
-        return ResponseEntity.ok(deliveryService.getDeliveriesOfCustomerByBoxID(customerID, boxID));
+        if(deliveryService.getDeliveriesOfCustomerByBoxID(customerID, boxID) != null){
+            return ResponseEntity.ok(deliveryService.getDeliveriesOfCustomerByBoxID(customerID, boxID));
+        }
+        else{
+            return ResponseEntity.badRequest().body("customerId or BoxId cannot be null");
+        }
+
     }
 
     // Get deliveries of deliverer by box id
     @GetMapping("/deliverer/{delivererID}/box/{boxID}")
     public ResponseEntity<?> getDeliveriesOfDelivererByBoxID(@PathVariable String delivererID, @PathVariable String boxID) throws Exception {
-        return ResponseEntity.ok(deliveryService.getDeliveriesOfDelivererByBoxID(delivererID, boxID));
-    }
+        if(deliveryService.getDeliveriesOfDelivererByBoxID(delivererID, boxID) != null){
+            return ResponseEntity.ok(deliveryService.getDeliveriesOfDelivererByBoxID(delivererID, boxID));
+        }
+        else{
+            return ResponseEntity.badRequest().body("DelivererID or BoxId cannot be null");
 
-    @GetMapping("/customer/{customerID}/box/{boxID}/status/{status}")
-    public ResponseEntity<?> getDeliveriesAtSameBoxOfCustomerByStatus(@PathVariable String customerID, @PathVariable String boxID, @PathVariable String status) throws Exception {
-        return ResponseEntity.ok(deliveryService.getDeliveriesAtSameBoxOfCustomerByStatus(customerID, boxID, status));
-    }
-
-    @GetMapping("/deliverer/{delivererID}/box/{boxID}/status/{status}")
-    public ResponseEntity<?> getDeliveriesAtSameBoxOfDelivererByStatus(@PathVariable String delivererID, @PathVariable String boxID, @PathVariable String status) throws Exception {
-        return ResponseEntity.ok(deliveryService.getDeliveriesAtSameBoxOfDelivererByStatus(delivererID, boxID, status));
+        }
     }
 
     // Update Delivery
@@ -76,5 +97,53 @@ public class DeliveryController {
     }
 
 
+    // Update Delivery Status from Ordered to PickedUp
+    @GetMapping("deliverer/updateStatus/{trackingID}")
+    public ResponseEntity<?> updateStatusToPickedUpByTrackingID(@PathVariable String trackingID) throws Exception {
+        Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
+        String delivererID = delivery.getDelivererID();
+        String currentDelivererID = "63dbeaae6ad1cc79825978e5"; //will be deleted
+        // current_delivererID = request.header.userid.
+        if (currentDelivererID.equals(delivererID)) {
+            if (delivery.getStatus().equals("Ordered")) {
+                delivery.setStatus("PickedUp");
+                return new ResponseEntity<>("Delivery with tracking ID : " + trackingID + "is picked-up" , HttpStatus.OK);
+            }
+        }
+        return ResponseEntity.badRequest().body("You have scanned the wrong box!");
+    }
 
+    // Box validation to open with RFID Token by User type
+    @PostMapping("/box/validate/{RFIDToken}/{BoxID}")
+    public ResponseEntity<?> updateBoxValidation(@PathVariable String RFIDToken, @PathVariable String BoxID) throws Exception {
+        User user = this.userService.getUserByRFIDToken(RFIDToken);
+        String userID = user.getId();
+        //ADD There is no user return bad request unauthorized user
+        String UserType = user.getRoles().stream().findAny().get().getRoleEnum().toString();
+        if (UserType.equals("ROLE_DELIVERER")) {
+            List<Delivery> deliverer_deliveries = this.deliveryService.getDeliveriesOfDelivererByStatus(userID, BoxID, "PickedUp");
+            if (!deliverer_deliveries.isEmpty()) {
+                List <String> deliveriesOfDelivererIDs = new ArrayList<String>();
+                deliverer_deliveries.forEach( delivery -> deliveriesOfDelivererIDs.add(delivery.getId()));
+                return ResponseEntity.ok(deliveriesOfDelivererIDs);
+            }
+
+        }
+        else if (UserType.equals("ROLE_CUSTOMER")) {
+            List<Delivery> customer_deliveries = this.deliveryService.getDeliveriesOfCustomerByStatus(userID, BoxID, "Delivered");
+            if (!customer_deliveries.isEmpty()) {
+                List <String> deliveriesOfCustomerIDs = new ArrayList<String>();
+                customer_deliveries.forEach( delivery -> deliveriesOfCustomerIDs.add(delivery.getId()));
+                return ResponseEntity.ok(deliveriesOfCustomerIDs);
+            }
+        }
+        return null; //????
+
+    }
+
+    
 }
+
+
+
+
