@@ -1,10 +1,7 @@
 package edu.tum.ase.ase23;
 
 import com.mongodb.client.MongoClient;
-import edu.tum.ase.ase23.config.CorsConfig;
-import edu.tum.ase.ase23.model.Box;
-import edu.tum.ase.ase23.model.Delivery;
-import edu.tum.ase.ase23.model.User;
+//import edu.tum.ase.ase23.config.CorsConfig;
 import edu.tum.ase.ase23.service.BoxService;
 import edu.tum.ase.ase23.service.DeliveryService;
 import edu.tum.ase.ase23.service.UserService;
@@ -18,7 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@Import(CorsConfig.class)
+//@Import(CorsConfig.class)
 @EnableMongoRepositories(basePackages = {"edu.tum.ase.ase23.repository"})
 public class BoxApplication implements CommandLineRunner {
 
