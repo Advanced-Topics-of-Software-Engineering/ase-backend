@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -55,9 +57,25 @@ public class RequestFilter extends OncePerRequestFilter {
                     headers.setContentType(MediaType.valueOf(request.getHeader("Content-Type")));
                     headers.set("x-authentication", request.getHeader("x-authentication"));
                     String bodyContent = servletRequest.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-                    JSONObject bodyContentJson = new JSONObject(bodyContent);
-                    servletRequest.setAttribute("body", bodyContentJson);
-                    entity = new HttpEntity<>(bodyContentJson.toMap(), headers);
+                    if (bodyContent.substring(0,1).equals("[")) {
+                        JSONArray bodyContentJson = new JSONArray(bodyContent);
+                        servletRequest.setAttribute("body", bodyContentJson);
+                        Map<String, Object> map = new HashMap<>();
+                        for (int i = 0; i < bodyContentJson.length(); i++) {
+                            Object element = bodyContentJson.get(i);
+                            map.put(String.valueOf(i), element);
+                        }
+                        entity = new HttpEntity<>(map, headers);
+                    } else if (bodyContent.substring(0,1).equals("{")) {
+                        JSONObject bodyContentJson = new JSONObject(bodyContent);
+                        servletRequest.setAttribute("body", bodyContentJson);
+                        entity = new HttpEntity<>(bodyContentJson.toMap(), headers);
+                    }
+                    else {
+                        throw new Exception("Error!");
+                    }
+
+
                     authResponse = restTemplate.exchange(
                             authServer + request.getRequestURI(),
                             HttpMethod.valueOf(request.getMethod()),
