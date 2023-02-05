@@ -139,9 +139,7 @@ public class DeliveryService {
         if (delivery.getStatus() != null && !delivery.getStatus().isEmpty()) {
             updatedDelivery.setStatus(delivery.getStatus());
         }
-        if (delivery.getTrackingID() != null && !delivery.getStatus().isEmpty()) {
-            updatedDelivery.setTrackingID(delivery.getTrackingID());
-        }
+
         return deliveryRepository.save(updatedDelivery);
     }
 
