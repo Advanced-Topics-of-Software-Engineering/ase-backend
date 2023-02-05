@@ -53,6 +53,7 @@ public class RequestFilter extends OncePerRequestFilter {
                 ResponseEntity<Object> authResponse;
                 if (!request.getMethod().equals("GET")) {
                     headers.setContentType(MediaType.valueOf(request.getHeader("Content-Type")));
+                    headers.set("x-authentication", request.getHeader("x-authentication"));
                     String bodyContent = servletRequest.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
                     JSONObject bodyContentJson = new JSONObject(bodyContent);
                     servletRequest.setAttribute("body", bodyContentJson);
@@ -72,6 +73,7 @@ public class RequestFilter extends OncePerRequestFilter {
                             new ParameterizedTypeReference<Object>() {
                             }
                     );
+                    logger.info("break");
                 }
 
 
@@ -89,7 +91,7 @@ public class RequestFilter extends OncePerRequestFilter {
         } catch (Exception e) {
 //            logger.error("Error during authentication", e);
             JSONObject json = new JSONObject(e.getMessage().substring(7, e.getMessage().length() - 1));
-//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(Integer.parseInt(e.getMessage().substring(0, 3)));
 //            request.setAttribute("body",json);
             final ObjectMapper mapper = new ObjectMapper();
