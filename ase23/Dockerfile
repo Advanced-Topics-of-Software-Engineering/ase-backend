@@ -5,6 +5,7 @@ FROM yannoff/maven:3-openjdk-19 AS build
 COPY src /home/app/ase23/src
 COPY pom.xml /home/app/ase23
 RUN mvn -f /home/app/ase23/pom.xml clean package
+
 #
 # Package stage
 #
