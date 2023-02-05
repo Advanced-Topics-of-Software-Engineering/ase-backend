@@ -1,13 +1,21 @@
 package edu.tum.ase.ase23.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.Authenticator;
 import edu.tum.ase.ase23.model.Delivery;
+import edu.tum.ase.ase23.model.RoleEnum;
 import edu.tum.ase.ase23.model.User;
+import edu.tum.ase.ase23.payload.request.BoxRequest;
 import edu.tum.ase.ase23.payload.request.DeliveryCreateRequest;
 import edu.tum.ase.ase23.payload.response.MessageResponse;
 import edu.tum.ase.ase23.repository.DeliveryRepository;
 import edu.tum.ase.ase23.service.DeliveryService;
 import edu.tum.ase.ase23.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.HttpStatus;
@@ -18,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,8 +77,33 @@ public class DeliveryController {
 
     // Get Delivery information by trackingID
     @GetMapping("/trackingID/{trackingID}")
-    public ResponseEntity<?> getDeliveryByTrackingID(@PathVariable String trackingID) throws Exception {
-        return ResponseEntity.ok(deliveryService.getDeliveryByTrackingID(trackingID));
+    public ResponseEntity<?> getDeliveryByTrackingID(@PathVariable String trackingID, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String body = request.getAttribute("body").toString().replace("=",":");
+        JSONObject bodyContentJson = new JSONObject(body);
+        String userId = bodyContentJson.get("id").toString();
+
+        String userRole = bodyContentJson.get("authorities").toString()
+                .substring(15,bodyContentJson.get("authorities").toString().length()-3);
+
+
+        Delivery delivery = deliveryService.getDeliveryByTrackingID(trackingID);
+        if (RoleEnum.valueOf(userRole).equals(RoleEnum.ROLE_CUSTOMER)) {
+            if (userId.equals(delivery.getCustomerID())) {
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(delivery);
+            }
+        }
+        else if (RoleEnum.valueOf(userRole).equals(RoleEnum.ROLE_DELIVERER)) {
+            if (userId.equals(delivery.getDelivererID())) {
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(delivery);
+            }
+        }
+        else if (RoleEnum.valueOf(userRole).equals(RoleEnum.ROLE_DISPATCHER)) {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(delivery);
+        }
+        return ResponseEntity.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new MessageResponse("Error: Something went wrong!"));
+
     }
 
     // Get deliveries of customer by box id
@@ -119,30 +153,34 @@ public class DeliveryController {
     }
 
     // Box validation to open with RFID Token by User type
-    @PostMapping("/box/validate/{RFIDToken}/{BoxID}")
-    public ResponseEntity<?> updateBoxValidation(@PathVariable String RFIDToken, @PathVariable String BoxID) throws Exception {
-        User user = this.userService.getUserByRFIDToken(RFIDToken);
-        String userID = user.getId();
-        //ADD There is no user return bad request unauthorized user
-        String UserType = user.getRoles().stream().findAny().get().getRoleEnum().toString();
-        if (UserType.equals("ROLE_DELIVERER")) {
-            List<Delivery> pickedUpDeliveries = this.deliveryService.getDeliveriesOfDelivererByStatus(userID, BoxID, "PICKEDUP");
-            if (!pickedUpDeliveries.isEmpty()) {
-                List <String> DelivererIDsOfDeliveries = new ArrayList<String>();
-                pickedUpDeliveries.forEach( delivery -> DelivererIDsOfDeliveries.add(delivery.getId()));
-                return ResponseEntity.ok(DelivererIDsOfDeliveries);
+    @PostMapping("/box/validate")
+    public ResponseEntity<?> updateBoxValidation(@Valid @RequestBody BoxRequest boxRequest, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            User user = objectMapper.convertValue(request.getAttribute("body"), User.class);
+//            User user = (User) request.getAttribute("body");
+//            User user = userService.getUserByRFIDToken(RFIDToken);
+            String userID = user.getId();
+            //ADD There is no user return bad request unauthorized user
+            String UserType = user.getRoles().stream().findAny().get().getRoleEnum().toString();
+            if (UserType.equals("ROLE_DELIVERER")) {
+                List<Delivery> pickedUpDeliveries = deliveryService.getDeliveriesOfDelivererByStatus(userID, boxRequest.getBoxId(), "PICKEDUP");
+                if (!pickedUpDeliveries.isEmpty()) {
+                    List<String> DelivererIDsOfDeliveries = pickedUpDeliveries.stream().map(delivery -> delivery.getId()).toList();
+                    return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(DelivererIDsOfDeliveries);
+                }
+            } else if (UserType.equals("ROLE_CUSTOMER")) {
+                List<Delivery> deliveredDeliveries = deliveryService.getDeliveriesOfCustomerByStatus(userID, boxRequest.getBoxId(), "DELIVERED");
+                if (!deliveredDeliveries.isEmpty()) {
+                    List<String> CustomerIDsOfDeliveries = deliveredDeliveries.stream().map(delivery -> delivery.getId()).toList();
+                    return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(CustomerIDsOfDeliveries);
+                }
             }
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(new MessageResponse("Error: Something went wrong!"));
 
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(new MessageResponse(e.getMessage()));
         }
-        else if (UserType.equals("ROLE_CUSTOMER")) {
-            List<Delivery> deliveredDeliveries = this.deliveryService.getDeliveriesOfCustomerByStatus(userID, BoxID, "DELIVERED");
-            if (!deliveredDeliveries.isEmpty()) {
-                List <String> CustomerIDsOfDeliveries = new ArrayList<String>();
-                deliveredDeliveries.forEach( delivery -> CustomerIDsOfDeliveries.add(delivery.getId()));
-                return ResponseEntity.ok(CustomerIDsOfDeliveries);
-            }
-        }
-        return null; //????
 
     }
 
