@@ -213,7 +213,7 @@ public class DeliveryController {
             return ResponseEntity.ok("");
         }
     }
-    @GetMapping("/delete/{deliveryID}")
+    @PostMapping("/delete/{deliveryID}")
     public ResponseEntity<?> deleteDelivery(@PathVariable String deliveryID) throws Exception {
         if (!deliveryService.delete(deliveryID)) {
             return ResponseEntity
