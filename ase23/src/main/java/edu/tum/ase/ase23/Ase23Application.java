@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@Import(CorsConfig.class)
 @EnableMongoRepositories(basePackages = {"edu.tum.ase.ase23.repository"})
 public class Ase23Application {
 
