@@ -32,18 +32,16 @@ public class DeliveryService {
         return deliveryRepository.save(newDelivery);
     }
 
-    public List<Delivery> getDeliveriesOfUserFromCustomerId(String customerId) throws Exception {
-        User user = userService.getUserById(customerId);
-        List<Delivery> deliveries = this.getAllDeliveries();
+    public List<Delivery> getDeliveriesOfUserFromCustomerId(String customerId) {
+        List<Delivery> deliveries = getAllDeliveries();
         return deliveries.stream().filter(delivery ->
-                delivery.getCustomerID().equals(user.getId())).collect(Collectors.toList());
+                delivery.getCustomerID().equals(customerId)).collect(Collectors.toList());
     }
 
-    public List<Delivery> getDeliveriesOfUserFromDelivererId(String delivererId) throws Exception {
-        User user = userService.getUserById(delivererId);
-        List<Delivery> deliveries = this.getAllDeliveries();
+    public List<Delivery> getDeliveriesOfUserFromDelivererId(String delivererId) {
+        List<Delivery> deliveries = getAllDeliveries();
         return deliveries.stream().filter(delivery ->
-                delivery.getDelivererID().equals(user.getId())).collect(Collectors.toList());
+                delivery.getDelivererID().equals(delivererId)).collect(Collectors.toList());
     }
 
     public Delivery getDeliveryById(String deliveryId) throws Exception {
@@ -144,7 +142,7 @@ public class DeliveryService {
         if (customerID == null || customerID.isEmpty() || boxID == null || boxID.isEmpty()) {
             return null;
         }
-        List<Delivery> deliveriesOfCustomer = this.getDeliveriesOfUserFromCustomerId(customerID);
+        List<Delivery> deliveriesOfCustomer = getDeliveriesOfUserFromCustomerId(customerID);
         List<Delivery> deliveriesOfCustomerAtSameBox = deliveriesOfCustomer.stream().filter(delivery ->
                 delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
         return deliveriesOfCustomerAtSameBox;
@@ -155,7 +153,7 @@ public class DeliveryService {
         if (delivererID == null || delivererID.isEmpty() || boxID == null || boxID.isEmpty()) {
             return null;
         }
-        List<Delivery> deliveriesOfDeliverer = this.getDeliveriesOfUserFromDelivererId(delivererID);
+        List<Delivery> deliveriesOfDeliverer = getDeliveriesOfUserFromDelivererId(delivererID);
         List<Delivery> deliveriesOfDelivererAtSameBox = deliveriesOfDeliverer.stream().filter(delivery ->
                 delivery.getBox().getId().equals(boxID)).collect(Collectors.toList());
         return deliveriesOfDelivererAtSameBox;
@@ -163,7 +161,7 @@ public class DeliveryService {
     }
 
     public List<Delivery> getDeliveriesOfCustomerByStatus(String customerID, String boxID, String status) throws Exception {
-        List<Delivery> deliveriesOfCustomerAtSameBox = this.getDeliveriesOfCustomerByBoxID(customerID, boxID);
+        List<Delivery> deliveriesOfCustomerAtSameBox = getDeliveriesOfCustomerByBoxID(customerID, boxID);
         List<Delivery> deliveriesOfCustomerAtSameBoxAsStatus = deliveriesOfCustomerAtSameBox.stream().filter(delivery ->
                 delivery.getStatus().equals(status)).collect(Collectors.toList());
         return deliveriesOfCustomerAtSameBoxAsStatus;
@@ -171,7 +169,7 @@ public class DeliveryService {
     }
 
     public List<Delivery> getDeliveriesOfDelivererByStatus(String delivererID, String boxID, String status) throws Exception {
-        List<Delivery> deliveriesOfDelivererAtSameBox = this.getDeliveriesOfDelivererByBoxID(delivererID, boxID);
+        List<Delivery> deliveriesOfDelivererAtSameBox = getDeliveriesOfDelivererByBoxID(delivererID, boxID);
         List <Delivery> deliveriesOfDelivererAtSameBoxAsStatus = deliveriesOfDelivererAtSameBox.stream().filter(delivery ->
                 delivery.getStatus().equals(status)).collect(Collectors.toList());
         return deliveriesOfDelivererAtSameBoxAsStatus;
