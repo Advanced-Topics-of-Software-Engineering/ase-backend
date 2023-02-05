@@ -1,6 +1,7 @@
 package edu.tum.ase.ase23.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.tum.ase.ase23.util.MultiReadHttpServletRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public class RequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        MultiReadHttpServletRequest servletRequest = new MultiReadHttpServletRequest(request);
         try {
             // Send a request to the authentication server to validate the authentication
             response.setHeader("Access-Control-Allow-Origin", "*");
@@ -52,9 +53,9 @@ public class RequestFilter extends OncePerRequestFilter {
                 ResponseEntity<Object> authResponse;
                 if (!request.getMethod().equals("GET")) {
                     headers.setContentType(MediaType.valueOf(request.getHeader("Content-Type")));
-                    String bodyContent = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+                    String bodyContent = servletRequest.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
                     JSONObject bodyContentJson = new JSONObject(bodyContent);
-                    request.setAttribute("body", bodyContentJson);
+                    servletRequest.setAttribute("body", bodyContentJson);
                     entity = new HttpEntity<>(bodyContentJson.toMap(), headers);
                     authResponse = restTemplate.exchange(
                             authServer + request.getRequestURI(),
@@ -78,23 +79,25 @@ public class RequestFilter extends OncePerRequestFilter {
                 logger.info("break");
                 if (authResponse.getStatusCode().equals(HttpStatus.OK)) {
                     response.setStatus(HttpStatus.OK.value());
-                    final ObjectMapper mapper = new ObjectMapper();
-                    mapper.writeValue(response.getOutputStream(), authResponse.getBody());
+                    servletRequest.setAttribute("body",authResponse.getBody());
+//                    final ObjectMapper mapper = new ObjectMapper();
+//                    mapper.writeValue(response.getOutputStream(), authResponse.getBody());
 
                     logger.info("break");
                 }
             }
         } catch (Exception e) {
-            logger.error("Error during authentication", e);
+//            logger.error("Error during authentication", e);
             JSONObject json = new JSONObject(e.getMessage().substring(7, e.getMessage().length() - 1));
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setStatus((int) json.get("status"));
+//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(Integer.parseInt(e.getMessage().substring(0, 3)));
+//            request.setAttribute("body",json);
             final ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(response.getOutputStream(), json.toMap());
             logger.info("qasdasd");
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(new MultiReadHttpServletRequest(servletRequest), response);
     }
 
 

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BoxService {
@@ -18,7 +19,7 @@ public class BoxService {
     @Lazy
     DeliveryService deliveryService;
     public List<Box> getAllBoxes() {
-        return boxRepository.findAll();
+        return boxRepository.findAll().stream().filter(box -> !box.getName().equals("DELETED_BOX")).toList();
     }
 
     public Box createBox(Box box) {
@@ -51,17 +52,30 @@ public class BoxService {
     public Boolean delete(String Id) throws Exception {
         Box boxToDelete = boxRepository.findById(Id).orElseThrow(() -> new Exception("Box not found with id: " + Id));
         // If there is no delivery related to this box, delete box directly
-        if (deliveryService.getDeliveriesFromBoxId(Id).isEmpty()){
+        List<Delivery> allDeliveries = deliveryService.getDeliveriesFromBoxId(Id);
+
+        List<Delivery> nonCompletedDeliveries = allDeliveries.stream().filter(
+                delivery -> !delivery.getStatus().equals("COMPLETED")
+        ).toList();
+
+        if (nonCompletedDeliveries.isEmpty()){
+            boxRepository.delete(boxToDelete);
+            List<Delivery> completedDeliveriesOfBox = deliveryService.getCompletedDeliveriesOfBox(Id);
+            if (!completedDeliveriesOfBox.isEmpty()) {
+                deliveryService.assignGarbageBoxToCompletedDeliveries(completedDeliveriesOfBox);
+//                return Boolean.FALSE;
+            }
             boxRepository.delete(boxToDelete);
             return Boolean.TRUE;
         }
-        List<Delivery> completedDeliveriesOfBox = deliveryService.getCompletedDeliveriesOfBox(Id);
-        if (completedDeliveriesOfBox.isEmpty()) {
+        else {
             return Boolean.FALSE;
         }
-        deliveryService.assignGarbageBoxToCompletedDeliveries(completedDeliveriesOfBox);
-        boxRepository.delete(boxToDelete);
-        return Boolean.TRUE;
+
+
+
+
+
     }
 
 }

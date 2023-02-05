@@ -28,12 +28,12 @@ public class Delivery {
 
     protected Delivery() {}
 
-    public Delivery(Box box, String customerID, String delivererID, String trackingID) {
+    public Delivery(Box box, String customerID, String delivererID) {
         this.box = box;
         this.customerID = customerID;
         this.delivererID = delivererID;
-        this.status = "Ordered";
-        this.trackingID = trackingID;
+        this.status = "ORDERED";
+        this.trackingID = customerID+delivererID;
     }
 
     //getters and setters

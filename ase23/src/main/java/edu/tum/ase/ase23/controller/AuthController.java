@@ -28,7 +28,7 @@ public class AuthController {
         if (response.getStatus() != 200) {
             return ResponseEntity.badRequest().contentType(MediaType.valueOf(response.getContentType())).body(response.getOutputStream());
         }
-        return ResponseEntity.ok().contentType(MediaType.valueOf(response.getContentType())).body(response.getOutputStream());
+        return ResponseEntity.ok().contentType(MediaType.valueOf("application/json")).body(request.getAttribute("body"));
     }
 
     @PostMapping("/signup")
@@ -36,6 +36,6 @@ public class AuthController {
         if (response.getStatus() != 200) {
             return ResponseEntity.badRequest().contentType(MediaType.valueOf(response.getContentType())).body(response.getOutputStream());
         }
-        return ResponseEntity.ok().contentType(MediaType.valueOf(response.getContentType())).body(response.getOutputStream());
+        return ResponseEntity.ok().contentType(MediaType.valueOf("application/json")).body(request.getAttribute("body"));
     }
 }
