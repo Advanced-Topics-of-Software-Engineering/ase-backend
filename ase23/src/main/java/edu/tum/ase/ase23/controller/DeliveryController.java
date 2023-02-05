@@ -51,8 +51,9 @@ public class DeliveryController {
     @PostMapping("")
     public ResponseEntity<?> createDelivery(@RequestBody DeliveryCreateRequest deliveryCreateRequest) throws Exception {
         deliveryService.createDelivery(deliveryCreateRequest);
+        String sendMailTo = "soydemir.ihsan@gmail.com";
+        emailService.sendSimpleMail(sendMailTo, "Congrats!", "Delivery created!");
         return ResponseEntity.ok(new MessageResponse("Success: Delivery created!"));
-        // new Delivery(dto.get(userId), .. , )
     }
 
     @GetMapping("/deliverer/{delivererId}")
